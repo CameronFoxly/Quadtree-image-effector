@@ -1,0 +1,327 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--bg-color-hover);
+  border-radius: 0.5rem;
+  max-width: 42rem;
+  margin: 0 auto;
+}
+
+.controlGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-color);
+}
+
+.value {
+  font-weight: 500;
+  color: var(--text-color-secondary);
+}
+
+.slider {
+  width: 100%;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  outline: none;
+  -webkit-appearance: none;
+  margin: 0.5rem 0;
+}
+
+/* Track styles */
+.slider::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+/* Thumb styles */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: -6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background: var(--primary-color-dark);
+  transform: scale(1.1);
+}
+
+.slider::-webkit-slider-thumb:active {
+  transform: scale(1.2);
+}
+
+/* Firefox styles */
+.slider::-moz-range-track {
+  width: 100%;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  border: none;
+}
+
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.slider::-moz-range-thumb:hover {
+  background: var(--primary-color-dark);
+  transform: scale(1.1);
+}
+
+.slider::-moz-range-thumb:active {
+  transform: scale(1.2);
+}
+
+.colorPicker {
+  width: 100%;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  background: none;
+}
+
+.colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorPicker::-webkit-color-swatch {
+  border: 1px solid var(--border-color);
+  border-radius: 0.375rem;
+}
+
+.dark .controls {
+  background-color: var(--bg-color-hover-dark);
+}
+
+.dark .slider {
+  background: var(--border-color-dark);
+}
+
+.dark .slider::-webkit-slider-runnable-track {
+  background: var(--border-color-dark);
+}
+
+.dark .slider::-moz-range-track {
+  background: var(--border-color-dark);
+}
+
+.dark .colorPicker::-webkit-color-swatch {
+  border-color: var(--border-color-dark);
+}
+
+.container {
+  width: 100%;
+  max-width: 28rem;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.listboxContainer {
+  position: relative;
+}
+
+.listboxButton {
+  position: relative;
+  width: 100%;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  background-color: white;
+  padding: 0.5rem 0.75rem 0.5rem 0.75rem;
+  text-align: left;
+  border: 1px solid var(--border-light);
+}
+
+.listboxButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-color);
+}
+
+.listboxButtonText {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listboxButtonIcon {
+  pointer-events: none;
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.chevronIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #9ca3af;
+}
+
+.listboxOptions {
+  position: absolute;
+  z-index: 10;
+  margin-top: 0.25rem;
+  max-height: 15rem;
+  width: 100%;
+  overflow: auto;
+  border-radius: 0.375rem;
+  background-color: white;
+  padding: 0.25rem 0;
+  font-size: 0.875rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.listboxOptions:focus {
+  outline: none;
+}
+
+.listboxOption {
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+}
+
+.listboxOptionActive {
+  background-color: rgba(14, 165, 233, 0.1);
+  color: var(--primary-color);
+}
+
+.listboxOptionText {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listboxOptionSelected {
+  font-weight: 500;
+}
+
+.listboxOptionCheck {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+}
+
+.checkIcon {
+  height: 1.25rem;
+  width: 1.25rem;
+  color: var(--primary-color);
+}
+
+.rangeInput {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: 0.5rem;
+  background: var(--border-light);
+  appearance: none;
+  cursor: pointer;
+}
+
+.rangeInput::-webkit-slider-thumb {
+  appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.rangeInput::-webkit-slider-thumb:hover {
+  background: var(--primary-hover);
+}
+
+.rangeLabels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+.modeToggle {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.modeButton {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.875rem;
+}
+
+.modeButton:hover {
+  background-color: var(--bg-color-hover);
+}
+
+.modeButtonActive {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  border-color: var(--primary-color) !important;
+}
+
+.modeButtonActive:hover {
+  background-color: var(--primary-color-dark) !important;
+}
+
+.dark .modeButton {
+  border-color: var(--border-color-dark);
+  background-color: var(--bg-color-dark);
+}
+
+.dark .modeButton:hover {
+  background-color: var(--bg-color-hover-dark);
+}
+
+.dark .modeButtonActive {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  border-color: var(--primary-color) !important;
+}
+
+.dark .modeButtonActive:hover {
+  background-color: var(--primary-color-dark) !important;
+} 

@@ -1,0 +1,148 @@
+/* Custom styles can be added here if needed */
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+.container {
+  min-height: 100vh;
+  padding: 1rem;
+  background-color: var(--bg-color);
+  transition: background-color 0.2s;
+}
+
+.container.dark {
+  background-color: var(--bg-color-dark);
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--text-color-secondary);
+}
+
+.main {
+  display: flex;
+  gap: 2rem;
+  align-items: flex-start;
+  min-height: calc(100vh - 200px);
+  justify-content: center;
+}
+
+.previewSection {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.controlsSection {
+  width: 400px;
+  flex-shrink: 0;
+}
+
+/* When there's no image, center the upload UI */
+.main:has(> :only-child) {
+  align-items: center;
+  justify-content: center;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.buttonPrimary {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+}
+
+.buttonPrimary:hover {
+  background-color: var(--primary-color-dark);
+}
+
+.buttonSecondary {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.buttonSecondary:hover {
+  background-color: var(--bg-color-hover);
+}
+
+.dark .buttonSecondary {
+  border-color: var(--border-color-dark);
+}
+
+.dark .buttonSecondary:hover {
+  background-color: var(--bg-color-hover-dark);
+}
