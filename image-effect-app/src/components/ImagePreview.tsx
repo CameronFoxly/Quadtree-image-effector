@@ -210,7 +210,8 @@ export default function ImagePreview({
           height: region.height * scaleY
         };
         ctx.strokeStyle = settings.outlineColor;
-        ctx.lineWidth = settings.outlineWidth;
+        // Scale the line width to match the download version
+        ctx.lineWidth = settings.outlineWidth * scaleX;
         // Apply offset in original image space before scaling
         const offset = settings.outlineWidth;
         ctx.strokeRect(
