@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect } from 'react'
 import ImageUpload from './components/ImageUpload'
 import ImagePreview from './components/ImagePreview'
 import EffectControls from './components/EffectControls'
@@ -150,7 +150,6 @@ function App() {
               <div className="previewSection">
                 <ImagePreview
                   imageUrl={imageUrl}
-                  effect="quadtree"
                   settings={{
                     varianceThreshold,
                     maxLevel,

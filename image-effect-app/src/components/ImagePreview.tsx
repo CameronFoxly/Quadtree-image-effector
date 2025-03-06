@@ -11,7 +11,6 @@ interface EffectSettings {
 
 interface ImagePreviewProps {
   imageUrl: string;
-  effect: string;
   settings: EffectSettings;
   brushRadius: number;
   revealMode: 'image' | 'grid';
@@ -35,7 +34,6 @@ interface Point {
 
 export default function ImagePreview({
   imageUrl,
-  effect,
   settings,
   brushRadius,
   revealMode,
