@@ -109,12 +109,12 @@ function App() {
       }
 
       // Draw outlines for grid mode regions
-      if (gridOutlinedRegions.length > 0) {
+      if (gridOutlinedRegions.length > 0 && outlineWidth > 0) {
         gridOutlinedRegions.forEach(region => {
           ctx.strokeStyle = outlineColor;
           ctx.lineWidth = outlineWidth;
-          // Only offset the outlines for grid mode
-          const offset = outlineWidth / 2;
+          // Apply offset in original image space
+          const offset = outlineWidth;
           ctx.strokeRect(
             region.x + offset,
             region.y + offset,

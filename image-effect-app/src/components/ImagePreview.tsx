@@ -199,7 +199,7 @@ export default function ImagePreview({
     ctx.drawImage(tempCanvas, 0, 0, dimensions.width, dimensions.height, 0, 0, dimensions.displayWidth, dimensions.displayHeight);
 
     // Draw outlines for grid mode regions (always)
-    if (gridOutlinedRegions.length > 0) {
+    if (gridOutlinedRegions.length > 0 && settings.outlineWidth > 0) {
       const scaleX = dimensions.displayWidth / dimensions.width;
       const scaleY = dimensions.displayHeight / dimensions.height;
       gridOutlinedRegions.forEach(region => {
@@ -211,13 +211,13 @@ export default function ImagePreview({
         };
         ctx.strokeStyle = settings.outlineColor;
         ctx.lineWidth = settings.outlineWidth;
-        // Only offset the outlines for grid mode
-        const offset = settings.outlineWidth / 2;
+        // Apply offset in original image space before scaling
+        const offset = settings.outlineWidth;
         ctx.strokeRect(
-          displayRegion.x + offset,
-          displayRegion.y + offset,
-          displayRegion.width - (offset * 2),
-          displayRegion.height - (offset * 2)
+          displayRegion.x + (offset * scaleX),
+          displayRegion.y + (offset * scaleY),
+          displayRegion.width - (offset * 2 * scaleX),
+          displayRegion.height - (offset * 2 * scaleY)
         );
       });
     }
