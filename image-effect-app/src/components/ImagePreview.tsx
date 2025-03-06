@@ -167,10 +167,7 @@ export default function ImagePreview({
 
       // Apply current mode's effect at full resolution
       if (revealMode === 'image') {
-        // In image mode, render the quadtree with outlines for non-removed regions
-        renderQuadTree(tempCtx, quadtree, settings.outlineColor, settings.outlineWidth, gridRemovedRegions);
-        
-        // Restore original pixels for image-removed regions
+        // In image mode, first restore original pixels for image-removed regions
         if (originalImageDataRef.current) {
           imageRemovedRegions.forEach(region => {
             // Skip invalid regions
@@ -207,13 +204,51 @@ export default function ImagePreview({
             tempCtx.putImageData(regionImageData, region.x, region.y);
           });
         }
-      } else {
-        // In grid mode, render the quadtree with outlines only for non-removed regions
-        renderQuadTree(tempCtx, quadtree, settings.outlineColor, settings.outlineWidth, gridRemovedRegions);
       }
+
+      // Draw the quadtree effect (without outlines)
+      renderQuadTree(tempCtx, quadtree, settings.outlineColor, settings.outlineWidth, gridRemovedRegions, false);
+
+      // Clear the display canvas
+      ctx.clearRect(0, 0, dimensions.displayWidth, dimensions.displayHeight);
 
       // Scale down to display size
       ctx.drawImage(tempCanvas, 0, 0, dimensions.width, dimensions.height, 0, 0, dimensions.displayWidth, dimensions.displayHeight);
+
+      // Draw outlines at display resolution
+      if (settings.outlineWidth > 0) {
+        const scaleX = dimensions.displayWidth / dimensions.width;
+        const scaleY = dimensions.displayHeight / dimensions.height;
+        
+        // Draw outlines for non-removed regions
+        ctx.strokeStyle = settings.outlineColor;
+        ctx.lineWidth = settings.outlineWidth * scaleX;
+        
+        const drawOutlines = (node: QuadTreeNode) => {
+          if (node.children) {
+            node.children.forEach(drawOutlines);
+          } else {
+            // Check if region is not in gridRemovedRegions
+            const isRemoved = gridRemovedRegions.some(region => 
+              region.x === node.region.x && 
+              region.y === node.region.y && 
+              region.width === node.region.width && 
+              region.height === node.region.height
+            );
+            
+            if (!isRemoved) {
+              ctx.strokeRect(
+                node.region.x * scaleX,
+                node.region.y * scaleY,
+                node.region.width * scaleX,
+                node.region.height * scaleY
+              );
+            }
+          }
+        };
+        
+        drawOutlines(quadtree);
+      }
 
       // Draw hover effect if there's a hovered region
       if (hoveredRegions.length > 0) {

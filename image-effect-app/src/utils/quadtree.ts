@@ -197,12 +197,36 @@ export const createQuadTree = (
 
 export function renderQuadTree(
   ctx: CanvasRenderingContext2D,
-  quadtree: QuadTreeNode,
+  node: QuadTreeNode,
   outlineColor: string,
   outlineWidth: number,
-  removedRegions: { x: number; y: number; width: number; height: number }[] = []
+  removedRegions: { x: number; y: number; width: number; height: number }[],
+  drawOutlines: boolean = true
 ) {
-  drawQuadTree(ctx, quadtree, outlineColor, outlineWidth, removedRegions);
+  if (node.children) {
+    node.children.forEach(child => renderQuadTree(ctx, child, outlineColor, outlineWidth, removedRegions, drawOutlines));
+  } else {
+    // Check if region is not in removedRegions
+    const isRemoved = removedRegions.some(region => 
+      region.x === node.region.x && 
+      region.y === node.region.y && 
+      region.width === node.region.width && 
+      region.height === node.region.height
+    );
+    
+    if (!isRemoved) {
+      // Draw the region's color
+      ctx.fillStyle = `rgb(${node.color.r}, ${node.color.g}, ${node.color.b})`;
+      ctx.fillRect(node.region.x, node.region.y, node.region.width, node.region.height);
+      
+      // Draw outline if enabled
+      if (drawOutlines && outlineWidth > 0) {
+        ctx.strokeStyle = outlineColor;
+        ctx.lineWidth = outlineWidth;
+        ctx.strokeRect(node.region.x, node.region.y, node.region.width, node.region.height);
+      }
+    }
+  }
 }
 
 const createLeafNode = (region: Region, color: { r: number; g: number; b: number }, level: number, maxLevel: number): QuadTreeNode => ({
