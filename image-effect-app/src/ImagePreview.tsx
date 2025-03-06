@@ -73,6 +73,9 @@ export default function ImagePreview({
     setCursorPosition({ x: e.clientX, y: e.clientY });
 
     if (isDragging) {
+      // Clear hover regions during dragging
+      setHoveredRegions([]);
+      
       const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * Math.min(scaleX, scaleY));
       if (regions.length > 0) {
         const newRegions = regions.map(node => ({
@@ -109,7 +112,7 @@ export default function ImagePreview({
         }
       }
     } else {
-      // Update hovered regions
+      // Only show hover regions when not dragging
       const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * Math.min(scaleX, scaleY));
       if (regions.length > 0) {
         setHoveredRegions(regions.map(node => ({
@@ -142,6 +145,15 @@ export default function ImagePreview({
     }
     setIsDragging(false);
     currentDragRegions.current = [];
+    setHoveredRegions([]); // Clear hover regions when releasing mouse
+  };
+
+  const handleMouseLeave = () => {
+    setIsDragging(false);
+    currentDragRegions.current = [];
+    setHoveredRegions([]);
+    setCursorPosition(null);
+    setIsHovering(false);
   };
 
   // ... keep rest of the component the same ...

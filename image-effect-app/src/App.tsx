@@ -51,6 +51,15 @@ function App() {
     try {
       const url = URL.createObjectURL(file);
       setImageUrl(url);
+      // Reset all effects and regions
+      setImageRemovedRegions([]);
+      setGridOutlinedRegions([]);
+      setVarianceThreshold(1000);
+      setMaxLevel(6);
+      setOutlineColor('#FFFFFF');
+      setOutlineWidth(0.5);
+      setBrushRadius(15);
+      setRevealMode('image');
     } catch (error) {
       // Silently handle error
     }

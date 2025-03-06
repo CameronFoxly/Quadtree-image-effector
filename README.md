@@ -1,93 +1,78 @@
-# Quadtree Image Effect
+# Quadtree Image Effector
 
-An interactive web application that applies a quadtree-based pixelation effect to images with customizable parameters and interactive reveal functionality.
+An interactive web application that applies quadtree-based effects to images, allowing users to selectively reveal the original image or grid structure through brushing interactions.
 
 ## Features
 
-- **Interactive Image Processing**: Upload any image and apply a quadtree-based pixelation effect
-- **Customizable Parameters**:
-  - Variance Threshold: Control the level of detail in the pixelation (0-2000)
-  - Max Subdivision Level: Set the maximum depth of quadtree subdivisions (1-8)
-  - Outline Color: Choose the color of the grid outlines
-  - Outline Width: Adjust the thickness of the grid lines (0-3px)
-  - Brush Size: Control the size of the reveal brush (5-50px)
+- **Image Upload**: Support for uploading and processing any image file
+- **Interactive Brush Tools**: Two brush modes for interacting with the image:
+  - Image Mode: Reveals the original image beneath the quadtree effect
+  - Grid Mode: Shows grid structure with customizable outlines
+- **Adjustable Parameters**:
+  - Variance Threshold: Controls the detail level of the quadtree segmentation
+  - Maximum Level: Sets the maximum depth of the quadtree subdivision
+  - Outline Color: Customizable color for grid lines
+  - Outline Width: Adjustable thickness of grid lines
+  - Brush Size: Adjustable brush radius (use +/- keys or controls)
+- **Real-time Preview**: See changes immediately as you adjust parameters
+- **Download**: Export your processed image with all effects applied
 
-- **Two Reveal Modes**:
-  - **Image Mode**: Reveal the original image pixels while keeping the grid outlines
-  - **Grid Mode**: Remove grid outlines while maintaining the pixelated effect
+## Controls
 
-- **Interactive Controls**:
-  - Click and drag to reveal/remove regions
-  - Hover preview shows which regions will be affected
-  - Visual brush cursor with adjustable size
-  - Keyboard shortcuts for brush size adjustment (+/- keys)
-
-- **Reset Functionality**: Easily reset all modifications and return to the original state
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js (v14 or higher)
-- npm or yarn
-
-### Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/quadtree-image-effect.git
-cd quadtree-image-effect
-```
-
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
-
-3. Start the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-4. Open your browser and navigate to `http://localhost:5173`
-
-## Usage
-
-1. **Upload an Image**:
-   - Click the upload area or drag and drop an image file
-   - Supported formats: PNG, JPEG, GIF, etc.
-
-2. **Adjust Parameters**:
-   - Use the sliders and color picker to customize the effect
-   - Changes are applied in real-time
-
-3. **Interactive Reveal**:
-   - Select a reveal mode (Image or Grid)
-   - Click and drag over regions to reveal/remove effects
-   - Use the +/- keys to adjust brush size
-   - Hover over regions to preview the effect
-
-4. **Reset and Download**:
-   - Click "Reset" to clear all modifications
-   - Click "Download Image" to save the processed image
+- **Mouse Controls**:
+  - Click and drag to apply effects
+  - Hover to preview affected areas
+- **Keyboard Shortcuts**:
+  - `+` or `=`: Increase brush size
+  - `-` or `_`: Decrease brush size
+- **UI Controls**:
+  - Sliders for variance threshold and max level
+  - Color picker for outline color
+  - Slider for outline width
+  - Brush size adjustment
+  - Mode toggle between image and grid effects
+  - Reset button to clear all effects
+  - Download button to save the result
 
 ## Technical Details
 
-The application uses:
-- React with TypeScript
-- Canvas API for image processing
-- Quadtree algorithm for adaptive pixelation
-- CSS Modules for styling
+The application uses a quadtree algorithm to analyze and segment the image based on color variance. Each region is subdivided until either:
+- The variance threshold is met
+- The maximum subdivision level is reached
 
-The quadtree algorithm:
-- Recursively subdivides the image into quadrants
-- Calculates color variance in each region
-- Subdivides further if variance exceeds threshold
-- Maintains original color data for reveal functionality
+The quadtree structure enables efficient region selection and manipulation, allowing for smooth real-time interactions even with large images.
+
+## Getting Started
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Open your browser to the local development URL
+
+## Usage
+
+1. Upload an image using the upload button or drag-and-drop
+2. Adjust the effect parameters using the control panel
+3. Use the brush tool to reveal the original image or grid structure
+4. Download the processed image when satisfied with the result
+
+## Built With
+
+- React
+- TypeScript
+- Vite
+- HTML Canvas API
+
+## Deployment
+
+The application is deployed to GitHub Pages. You can access it at:
+https://cameronfoxly.github.io/Quadtree-image-effector/
 
 ## License
 
