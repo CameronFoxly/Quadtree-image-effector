@@ -19,7 +19,7 @@ function App() {
   const [varianceThreshold, setVarianceThreshold] = useState(1000)
   const [maxLevel, setMaxLevel] = useState(6)
   const [outlineColor, setOutlineColor] = useState('#FFFFFF')
-  const [outlineWidth, setOutlineWidth] = useState(0.2)
+  const [outlineWidth, setOutlineWidth] = useState(0.5)
   const [brushRadius, setBrushRadius] = useState(15)
   const [revealMode, setRevealMode] = useState<RevealMode>('image')
   const [imageRemovedRegions, setImageRemovedRegions] = useState<Region[]>([])
