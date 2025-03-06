@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './ImagePreview.module.css';
 import { createQuadTree, renderQuadTree, QuadTreeNode } from '../utils/quadtree';
 
@@ -15,6 +15,10 @@ interface ImagePreviewProps {
   settings: EffectSettings;
   brushRadius: number;
   revealMode: 'image' | 'grid';
+  imageRemovedRegions: RemovedRegion[];
+  gridRemovedRegions: RemovedRegion[];
+  onImageRemovedRegionsChange: (regions: RemovedRegion[]) => void;
+  onGridRemovedRegionsChange: (regions: RemovedRegion[]) => void;
 }
 
 interface RemovedRegion {
@@ -35,18 +39,30 @@ export default function ImagePreview({
   settings,
   brushRadius,
   revealMode,
+  imageRemovedRegions,
+  gridRemovedRegions,
+  onImageRemovedRegionsChange,
+  onGridRemovedRegionsChange,
 }: ImagePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
-  const dimensionsRef = useRef<{ width: number; height: number } | null>(null);
+  const dimensionsRef = useRef<{ width: number; height: number; displayWidth: number; displayHeight: number } | null>(null);
   const quadtreeRef = useRef<QuadTreeNode | null>(null);
   const originalImageDataRef = useRef<ImageData | null>(null);
-  const [hoveredRegions, setHoveredRegions] = useState<QuadTreeNode[]>([]);
-  const [removedRegions, setRemovedRegions] = useState<RemovedRegion[]>([]);
-  const [outlineRemovedRegions, setOutlineRemovedRegions] = useState<RemovedRegion[]>([]);
+  const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const renderTimeoutRef = useRef<number | null>(null);
+  const [hoveredRegions, setHoveredRegions] = useState<RemovedRegion[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<Point | null>(null);
   const [isHovering, setIsHovering] = useState(false);
+
+  // Create temporary canvas once
+  useEffect(() => {
+    tempCanvasRef.current = document.createElement('canvas');
+    return () => {
+      tempCanvasRef.current = null;
+    };
+  }, []);
 
   // Load and setup image
   useEffect(() => {
@@ -60,47 +76,58 @@ export default function ImagePreview({
     img.src = imageUrl;
 
     img.onload = () => {
-      // Calculate dimensions to maintain aspect ratio
-      const maxWidth = canvas.parentElement?.clientWidth || 800;
-      const maxHeight = window.innerHeight * 0.6; // 60vh
+      // Calculate dimensions to fill the left side of the viewport with 10% padding
+      const containerWidth = window.innerWidth * 0.5; // 50% of viewport width
+      const containerHeight = window.innerHeight; // Full viewport height
       
-      let width = img.width;
-      let height = img.height;
+      // Calculate available space with 10% padding
+      const availableWidth = containerWidth * 0.9;
+      const availableHeight = containerHeight * 0.9;
+      
+      // Calculate scaling factors to maintain aspect ratio
+      const scaleX = availableWidth / img.width;
+      const scaleY = availableHeight / img.height;
+      const scale = Math.min(scaleX, scaleY);
+      
+      // Calculate display dimensions
+      const displayWidth = img.width * scale;
+      const displayHeight = img.height * scale;
 
-      // Scale down if image is too large
-      if (width > maxWidth) {
-        height = (maxWidth * height) / width;
-        width = maxWidth;
-      }
-
-      if (height > maxHeight) {
-        width = (maxHeight * width) / height;
-        height = maxHeight;
-      }
-
-      // Store dimensions and image for later use
-      dimensionsRef.current = { width, height };
+      // Store both original and display dimensions
+      dimensionsRef.current = { 
+        width: img.width, 
+        height: img.height,
+        displayWidth,
+        displayHeight
+      };
       imageRef.current = img;
 
-      // Set canvas dimensions
-      canvas.width = width;
-      canvas.height = height;
+      // Set canvas to display dimensions
+      canvas.width = displayWidth;
+      canvas.height = displayHeight;
 
-      // Draw the original image first and store its data
-      ctx.drawImage(img, 0, 0, width, height);
-      originalImageDataRef.current = ctx.getImageData(0, 0, width, height);
+      // Create a temporary canvas at full resolution
+      const fullResCanvas = document.createElement('canvas');
+      fullResCanvas.width = img.width;
+      fullResCanvas.height = img.height;
+      const fullResCtx = fullResCanvas.getContext('2d');
+      if (!fullResCtx) return;
 
-      // Create and render quadtree immediately
+      // Draw original image at full resolution
+      fullResCtx.drawImage(img, 0, 0);
+      originalImageDataRef.current = fullResCtx.getImageData(0, 0, img.width, img.height);
+
+      // Create quadtree at full resolution
       const quadtree = createQuadTree(
-        ctx,
-        width,
-        height,
+        fullResCtx,
+        img.width,
+        img.height,
         settings.maxLevel,
         settings.varianceThreshold
       );
       quadtreeRef.current = quadtree;
 
-      renderQuadTree(ctx, quadtree, settings.outlineColor, settings.outlineWidth, removedRegions);
+      renderImage();
     };
 
     return () => {
@@ -109,83 +136,170 @@ export default function ImagePreview({
       quadtreeRef.current = null;
       originalImageDataRef.current = null;
     };
-  }, [imageUrl, settings.maxLevel, settings.varianceThreshold, settings.outlineColor, settings.outlineWidth]);
+  }, [imageUrl, settings.maxLevel, settings.varianceThreshold]);
 
-  // Apply quadtree effect when settings change
-  useEffect(() => {
+  // Optimized render function
+  const renderImage = useCallback(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext('2d');
     const img = imageRef.current;
     const dimensions = dimensionsRef.current;
+    const tempCanvas = tempCanvasRef.current;
+    const quadtree = quadtreeRef.current;
 
-    if (!canvas || !ctx || !img || !dimensions) return;
+    if (!canvas || !ctx || !img || !dimensions || !tempCanvas || !quadtree) return;
 
-    // Draw the original image first
-    ctx.drawImage(img, 0, 0, dimensions.width, dimensions.height);
-
-    // Create and render quadtree
-    const quadtree = createQuadTree(
-      ctx,
-      dimensions.width,
-      dimensions.height,
-      settings.maxLevel,
-      settings.varianceThreshold
-    );
-    quadtreeRef.current = quadtree;
-
-    // Draw the quadtree effect
-    renderQuadTree(ctx, quadtree, settings.outlineColor, settings.outlineWidth, outlineRemovedRegions);
-
-    // Draw hover effect if there's a hovered region
-    if (hoveredRegions.length > 0) {
-      hoveredRegions.forEach(region => {
-        // Draw white overlay with 30% opacity
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        ctx.fillRect(
-          region.region.x,
-          region.region.y,
-          region.region.width,
-          region.region.height
-        );
-
-        // Draw neon green outline for hovered region
-        ctx.strokeStyle = '#00ff00';
-        ctx.lineWidth = settings.outlineWidth;
-        ctx.strokeRect(
-          region.region.x,
-          region.region.y,
-          region.region.width,
-          region.region.height
-        );
-      });
+    // Clear any pending render
+    if (renderTimeoutRef.current) {
+      window.clearTimeout(renderTimeoutRef.current);
     }
 
-    // Restore original pixels for removed regions in image mode
-    if (revealMode === 'image' && originalImageDataRef.current) {
-      removedRegions.forEach(region => {
-        // Create a temporary canvas for the region
-        const tempCanvas = document.createElement('canvas');
-        tempCanvas.width = dimensions.width;
-        tempCanvas.height = dimensions.height;
-        const tempCtx = tempCanvas.getContext('2d');
-        if (!tempCtx) return;
+    // Schedule render for next frame
+    renderTimeoutRef.current = window.setTimeout(() => {
+      // Create a temporary canvas at full resolution
+      tempCanvas.width = dimensions.width;
+      tempCanvas.height = dimensions.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      if (!tempCtx) return;
 
-        // Draw the original image on the temporary canvas
-        tempCtx.drawImage(img, 0, 0, dimensions.width, dimensions.height);
+      // Draw the original image at full resolution
+      tempCtx.drawImage(img, 0, 0);
+
+      // Apply current mode's effect at full resolution
+      if (revealMode === 'image') {
+        // In image mode, render the quadtree with outlines for non-removed regions
+        renderQuadTree(tempCtx, quadtree, settings.outlineColor, settings.outlineWidth, gridRemovedRegions);
         
-        // Get the region's image data from the temporary canvas
-        const regionImageData = tempCtx.getImageData(
-          region.x,
-          region.y,
-          region.width,
-          region.height
-        );
+        // Restore original pixels for image-removed regions
+        if (originalImageDataRef.current) {
+          imageRemovedRegions.forEach(region => {
+            // Skip invalid regions
+            if (region.width <= 0 || region.height <= 0) return;
+            
+            // Ensure region is within image bounds
+            const maxX = Math.min(region.x + region.width, originalImageDataRef.current!.width);
+            const maxY = Math.min(region.y + region.height, originalImageDataRef.current!.height);
+            const validWidth = maxX - region.x;
+            const validHeight = maxY - region.y;
+            
+            if (validWidth <= 0 || validHeight <= 0) return;
+            
+            // Create region data array with correct size
+            const regionData = new Uint8ClampedArray(validWidth * validHeight * 4);
+            const originalData = originalImageDataRef.current!.data;
+            const originalWidth = originalImageDataRef.current!.width;
+            
+            for (let y = 0; y < validHeight; y++) {
+              for (let x = 0; x < validWidth; x++) {
+                const originalIndex = ((region.y + y) * originalWidth + (region.x + x)) * 4;
+                const regionIndex = (y * validWidth + x) * 4;
+                
+                if (originalIndex + 3 < originalData.length) {
+                  regionData[regionIndex] = originalData[originalIndex];
+                  regionData[regionIndex + 1] = originalData[originalIndex + 1];
+                  regionData[regionIndex + 2] = originalData[originalIndex + 2];
+                  regionData[regionIndex + 3] = originalData[originalIndex + 3];
+                }
+              }
+            }
+            
+            const regionImageData = new ImageData(regionData, validWidth, validHeight);
+            tempCtx.putImageData(regionImageData, region.x, region.y);
+          });
+        }
+      } else {
+        // In grid mode, render the quadtree with outlines only for non-removed regions
+        renderQuadTree(tempCtx, quadtree, settings.outlineColor, settings.outlineWidth, gridRemovedRegions);
+      }
 
-        // Put the region's image data back on the main canvas
-        ctx.putImageData(regionImageData, region.x, region.y);
-      });
+      // Scale down to display size
+      ctx.drawImage(tempCanvas, 0, 0, dimensions.width, dimensions.height, 0, 0, dimensions.displayWidth, dimensions.displayHeight);
+
+      // Draw hover effect if there's a hovered region
+      if (hoveredRegions.length > 0) {
+        hoveredRegions.forEach(region => {
+          // Scale hover region to display size
+          const scaleX = dimensions.displayWidth / dimensions.width;
+          const scaleY = dimensions.displayHeight / dimensions.height;
+          const displayRegion = {
+            x: region.x * scaleX,
+            y: region.y * scaleY,
+            width: region.width * scaleX,
+            height: region.height * scaleY
+          };
+
+          if (revealMode === 'image') {
+            // In image mode, show only the white overlay
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.fillRect(
+              displayRegion.x,
+              displayRegion.y,
+              displayRegion.width,
+              displayRegion.height
+            );
+          } else {
+            // In grid mode, show only the neon green outline
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = settings.outlineWidth * scaleX;
+            ctx.strokeRect(
+              displayRegion.x,
+              displayRegion.y,
+              displayRegion.width,
+              displayRegion.height
+            );
+          }
+        });
+      }
+    }, 0);
+  }, [settings.outlineColor, settings.outlineWidth, hoveredRegions, imageRemovedRegions, gridRemovedRegions, revealMode]);
+
+  // Debounced mouse move handler
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current || !imageRef.current || !quadtreeRef.current || !dimensionsRef.current) return;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const dimensions = dimensionsRef.current;
+    
+    // Scale mouse coordinates to match full resolution
+    const scaleX = dimensions.width / dimensions.displayWidth;
+    const scaleY = dimensions.height / dimensions.displayHeight;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    setCursorPosition({ x: e.clientX, y: e.clientY });
+
+    if (isDragging) {
+      const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+      if (regions.length > 0) {
+        const newRegions = regions.map(node => ({
+          x: node.region.x,
+          y: node.region.y,
+          width: node.region.width,
+          height: node.region.height
+        }));
+
+        if (revealMode === 'image') {
+          onImageRemovedRegionsChange([...imageRemovedRegions, ...newRegions]);
+        } else {
+          onGridRemovedRegionsChange([...gridRemovedRegions, ...newRegions]);
+        }
+      }
+    } else {
+      // Update hovered regions
+      const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+      if (regions.length > 0) {
+        setHoveredRegions(regions.map(node => ({
+          x: node.region.x,
+          y: node.region.y,
+          width: node.region.width,
+          height: node.region.height
+        })));
+      } else {
+        setHoveredRegions([]);
+      }
     }
-  }, [settings.varianceThreshold, settings.maxLevel, settings.outlineColor, settings.outlineWidth, hoveredRegions, removedRegions, outlineRemovedRegions, revealMode]);
+  }, [isDragging, brushRadius, imageRemovedRegions, gridRemovedRegions, revealMode, onImageRemovedRegionsChange, onGridRemovedRegionsChange]);
 
   const isPointInCircle = (point: Point, center: Point, radius: number): boolean => {
     const dx = point.x - center.x;
@@ -235,78 +349,6 @@ export default function ImagePreview({
     return regions;
   };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const canvas = canvasRef.current;
-    if (!canvas || !quadtreeRef.current) return;
-
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    
-    const windowX = e.clientX;
-    const windowY = e.clientY;
-    
-    const canvasX = (e.clientX - rect.left) * scaleX;
-    const canvasY = (e.clientY - rect.top) * scaleY;
-
-    setCursorPosition({ x: windowX, y: windowY });
-
-    const regions = findRegionsInBrush(quadtreeRef.current, { x: canvasX, y: canvasY }, brushRadius);
-    setHoveredRegions(regions);
-
-    if (isDragging) {
-      if (revealMode === 'image') {
-        setRemovedRegions(prev => {
-          const newRegions = regions.filter(region => {
-            return !prev.some(
-              removed =>
-                removed.x === region.region.x &&
-                removed.y === region.region.y &&
-                removed.width === region.region.width &&
-                removed.height === region.region.height
-            );
-          });
-
-          if (newRegions.length === 0) return prev;
-
-          return [
-            ...newRegions.map(region => ({
-              x: region.region.x,
-              y: region.region.y,
-              width: region.region.width,
-              height: region.region.height
-            })),
-            ...prev
-          ];
-        });
-      } else {
-        setOutlineRemovedRegions(prev => {
-          const newRegions = regions.filter(region => {
-            return !prev.some(
-              removed =>
-                removed.x === region.region.x &&
-                removed.y === region.region.y &&
-                removed.width === region.region.width &&
-                removed.height === region.region.height
-            );
-          });
-
-          if (newRegions.length === 0) return prev;
-
-          return [
-            ...newRegions.map(region => ({
-              x: region.region.x,
-              y: region.region.y,
-              width: region.region.width,
-              height: region.region.height
-            })),
-            ...prev
-          ];
-        });
-      }
-    }
-  };
-
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDragging(true);
     handleMouseMove(e); // Remove region on initial click
@@ -328,34 +370,51 @@ export default function ImagePreview({
   };
 
   const handleReset = () => {
-    setRemovedRegions([]);
-    setOutlineRemovedRegions([]);
+    onImageRemovedRegionsChange([]);
+    onGridRemovedRegionsChange([]);
     setHoveredRegions([]);
     setIsDragging(false);
     setCursorPosition(null);
     setIsHovering(false);
   };
 
-  const handleRegionClick = (region: RemovedRegion) => {
-    if (revealMode === 'image') {
-      // In image mode, reveal original pixels but keep outlines
-      setRemovedRegions(prev => [...prev, region]);
-    } else {
-      // In grid mode, remove outlines but keep averaged pixels
-      setOutlineRemovedRegions(prev => [...prev, region]);
+  const handleRegionClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current || !imageRef.current || !quadtreeRef.current || !dimensionsRef.current) return;
+
+    const canvas = canvasRef.current;
+    const rect = canvas.getBoundingClientRect();
+    const dimensions = dimensionsRef.current;
+    
+    // Scale mouse coordinates to match full resolution
+    const scaleX = dimensions.width / dimensions.displayWidth;
+    const scaleY = dimensions.height / dimensions.displayHeight;
+    const x = (e.clientX - rect.left) * scaleX;
+    const y = (e.clientY - rect.top) * scaleY;
+
+    const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+    if (regions.length > 0) {
+      const newRegions = regions.map(node => ({
+        x: node.region.x,
+        y: node.region.y,
+        width: node.region.width,
+        height: node.region.height
+      }));
+
+      if (revealMode === 'image') {
+        onImageRemovedRegionsChange([...imageRemovedRegions, ...newRegions]);
+      } else {
+        onGridRemovedRegionsChange([...gridRemovedRegions, ...newRegions]);
+      }
     }
   };
 
+  // Update effect to use optimized render
+  useEffect(() => {
+    renderImage();
+  }, [renderImage]);
+
   return (
     <div className={styles.previewContainer}>
-      <div className={styles.controls}>
-        <button 
-          className={styles.resetButton}
-          onClick={handleReset}
-        >
-          Reset
-        </button>
-      </div>
       <canvas
         ref={canvasRef}
         className={styles.previewCanvas}

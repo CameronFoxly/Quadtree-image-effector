@@ -1,48 +1,56 @@
 .previewContainer {
-  position: relative;
-  width: 100%;
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 50%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  justify-content: center;
+  padding: 5vh 5vw;
+  background-color: #1a1a1a;
+  overflow: hidden;
 }
 
 .controls {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  padding: 0.5rem;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
 }
 
 .resetButton {
-  background-color: var(--bg-color-hover);
-  color: var(--text-color);
-  border: 1px solid var(--border-color);
-  border-radius: 0.375rem;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
 }
 
 .resetButton:hover {
-  background-color: var(--bg-color-hover-dark);
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 .previewCanvas {
   max-width: 100%;
-  height: auto;
-  display: block;
-  position: relative;
+  max-height: 100%;
+  object-fit: contain;
+  background-color: #000;
 }
 
 .brushCursor {
   position: fixed;
   pointer-events: none;
-  will-change: transform;
+  z-index: 1000;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
   transform: translate(-50%, -50%);
-  background: transparent !important;
-  box-shadow: none !important;
+  background: transparent;
+  box-shadow: none;
 }
 
 .preview {

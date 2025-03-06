@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import ImageUpload from './components/ImageUpload'
 import ImagePreview from './components/ImagePreview'
 import EffectControls from './components/EffectControls'
@@ -6,6 +6,13 @@ import { createQuadTree, renderQuadTree } from './utils/quadtree'
 import './App.css'
 
 type RevealMode = 'image' | 'grid';
+
+interface Region {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
 
 function App() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
@@ -15,6 +22,8 @@ function App() {
   const [outlineWidth, setOutlineWidth] = useState(0.2)
   const [brushRadius, setBrushRadius] = useState(15)
   const [revealMode, setRevealMode] = useState<RevealMode>('image')
+  const [imageRemovedRegions, setImageRemovedRegions] = useState<Region[]>([])
+  const [gridRemovedRegions, setGridRemovedRegions] = useState<Region[]>([])
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -48,38 +57,78 @@ function App() {
   }
 
   const handleDownload = () => {
-    if (!imageUrl) return
+    if (!imageUrl) return;
 
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    const img = new Image()
-    img.src = imageUrl
+    const img = new Image();
+    img.src = imageUrl;
 
     img.onload = () => {
-      canvas.width = img.width
-      canvas.height = img.height
+      // Use original image dimensions
+      canvas.width = img.width;
+      canvas.height = img.height;
 
-      ctx.drawImage(img, 0, 0)
-      const quadtree = createQuadTree(ctx, img.width, img.height, maxLevel, varianceThreshold)
-      renderQuadTree(ctx, quadtree, outlineColor, outlineWidth)
+      // Draw the original image at full size
+      ctx.drawImage(img, 0, 0);
 
-      const link = document.createElement('a')
-      link.download = 'processed-image.png'
-      link.href = canvas.toDataURL('image/png')
-      link.click()
-    }
+      // Apply the current quadtree effect
+      const quadtree = createQuadTree(
+        ctx,
+        img.width,
+        img.height,
+        maxLevel,
+        varianceThreshold
+      );
+
+      // Create a temporary canvas for original image data
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = img.width;
+      tempCanvas.height = img.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      if (!tempCtx) return;
+
+      tempCtx.drawImage(img, 0, 0);
+
+      if (revealMode === 'image') {
+        // In image mode, render the quadtree with outlines for non-removed regions
+        renderQuadTree(ctx, quadtree, outlineColor, outlineWidth, gridRemovedRegions);
+        
+        // Restore original pixels for image-removed regions
+        imageRemovedRegions.forEach(region => {
+          const regionImageData = tempCtx.getImageData(
+            region.x,
+            region.y,
+            region.width,
+            region.height
+          );
+          ctx.putImageData(regionImageData, region.x, region.y);
+        });
+      } else {
+        // In grid mode, render the quadtree with outlines only for non-removed regions
+        renderQuadTree(ctx, quadtree, outlineColor, outlineWidth, gridRemovedRegions);
+      }
+
+      // Convert to blob and download
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'processed-image.png';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    };
   }
 
   return (
     <div className="container">
       <div className="content">
-        <header className="header">
-          <h1 className="title">Quadtree Image Effect</h1>
-          <p className="subtitle">Upload an image and apply quadtree pixelation with outlines</p>
-        </header>
-
         <main className="main">
           {!imageUrl ? (
             <ImageUpload onImageSelect={handleImageSelect} />
@@ -97,6 +146,10 @@ function App() {
                   }}
                   brushRadius={brushRadius}
                   revealMode={revealMode}
+                  imageRemovedRegions={imageRemovedRegions}
+                  gridRemovedRegions={gridRemovedRegions}
+                  onImageRemovedRegionsChange={setImageRemovedRegions}
+                  onGridRemovedRegionsChange={setGridRemovedRegions}
                 />
               </div>
               <div className="controlsSection">
@@ -115,6 +168,15 @@ function App() {
                   onRevealModeChange={setRevealMode}
                 />
                 <div className="buttonGroup">
+                  <button
+                    className="button buttonSecondary"
+                    onClick={() => {
+                      setImageRemovedRegions([]);
+                      setGridRemovedRegions([]);
+                    }}
+                  >
+                    Reset
+                  </button>
                   <button
                     className="button buttonSecondary"
                     onClick={() => setImageUrl(null)}

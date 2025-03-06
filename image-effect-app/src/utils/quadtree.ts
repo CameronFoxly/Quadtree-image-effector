@@ -97,7 +97,8 @@ function createQuadTreeNode(
       region,
       color: getAverageColor(ctx, region),
       children: null,
-      level
+      level,
+      maxLevel
     };
   }
   
@@ -106,17 +107,18 @@ function createQuadTreeNode(
   const halfHeight = Math.floor(region.height / 2);
   
   const children = [
-    createQuadTreeNode(ctx, { x: region.x, y: region.y, width: halfWidth, height: halfHeight }, level + 1, maxLevel, varianceThreshold),
-    createQuadTreeNode(ctx, { x: region.x + halfWidth, y: region.y, width: region.width - halfWidth, height: halfHeight }, level + 1, maxLevel, varianceThreshold),
-    createQuadTreeNode(ctx, { x: region.x, y: region.y + halfHeight, width: halfWidth, height: region.height - halfHeight }, level + 1, maxLevel, varianceThreshold),
-    createQuadTreeNode(ctx, { x: region.x + halfWidth, y: region.y + halfHeight, width: region.width - halfWidth, height: region.height - halfHeight }, level + 1, maxLevel, varianceThreshold)
+    createQuadTreeNode(ctx, { x: region.x, y: region.y, width: halfWidth + 1, height: halfHeight + 1 }, level + 1, maxLevel, varianceThreshold),
+    createQuadTreeNode(ctx, { x: region.x + halfWidth - 1, y: region.y, width: region.width - halfWidth + 1, height: halfHeight + 1 }, level + 1, maxLevel, varianceThreshold),
+    createQuadTreeNode(ctx, { x: region.x, y: region.y + halfHeight - 1, width: halfWidth + 1, height: region.height - halfHeight + 1 }, level + 1, maxLevel, varianceThreshold),
+    createQuadTreeNode(ctx, { x: region.x + halfWidth - 1, y: region.y + halfHeight - 1, width: region.width - halfWidth + 1, height: region.height - halfHeight + 1 }, level + 1, maxLevel, varianceThreshold)
   ];
   
   return {
     region,
     color: { r: 0, g: 0, b: 0 }, // This will be calculated from children
     children,
-    level
+    level,
+    maxLevel
   };
 }
 
@@ -141,15 +143,22 @@ function drawQuadTree(
         region.height === node.region.height
     );
 
-    if (!isRemoved) {
-      // Draw region
-      ctx.fillStyle = `rgb(${node.color.r}, ${node.color.g}, ${node.color.b})`;
-      ctx.fillRect(node.region.x, node.region.y, node.region.width, node.region.height);
-      
-      // Draw outline only for non-removed regions
+    // Always draw the region color
+    ctx.fillStyle = `rgb(${node.color.r}, ${node.color.g}, ${node.color.b})`;
+    ctx.fillRect(node.region.x, node.region.y, node.region.width, node.region.height);
+    
+    // Only draw outline if region is not removed and outlineWidth is greater than 0
+    if (!isRemoved && outlineWidth > 0) {
+      // Inset the outline by half the outline width to prevent overlap
+      const inset = outlineWidth / 2;
       ctx.strokeStyle = outlineColor;
       ctx.lineWidth = outlineWidth;
-      ctx.strokeRect(node.region.x, node.region.y, node.region.width, node.region.height);
+      ctx.strokeRect(
+        node.region.x + inset,
+        node.region.y + inset,
+        node.region.width - outlineWidth,
+        node.region.height - outlineWidth
+      );
     }
   }
 }
@@ -174,10 +183,10 @@ export const createQuadTree = (
     const halfHeight = height / 2;
 
     const children = [
-      createNode(x, y, halfWidth, halfHeight, level + 1),
-      createNode(x + halfWidth, y, halfWidth, halfHeight, level + 1),
-      createNode(x, y + halfHeight, halfWidth, halfHeight, level + 1),
-      createNode(x + halfWidth, y + halfHeight, halfWidth, halfHeight, level + 1)
+      createNode(x, y, halfWidth + 1, halfHeight + 1, level + 1),
+      createNode(x + halfWidth - 1, y, halfWidth + 1, halfHeight + 1, level + 1),
+      createNode(x, y + halfHeight - 1, halfWidth + 1, halfHeight + 1, level + 1),
+      createNode(x + halfWidth - 1, y + halfHeight - 1, halfWidth + 1, halfHeight + 1, level + 1)
     ];
 
     return createBranchNode({ x, y, width, height }, children, level, maxLevel);
