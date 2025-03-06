@@ -16,9 +16,9 @@ interface ImagePreviewProps {
   brushRadius: number;
   revealMode: 'image' | 'grid';
   imageRemovedRegions: RemovedRegion[];
-  gridRemovedRegions: RemovedRegion[];
+  gridOutlinedRegions: RemovedRegion[];
   onImageRemovedRegionsChange: (regions: RemovedRegion[]) => void;
-  onGridRemovedRegionsChange: (regions: RemovedRegion[]) => void;
+  onGridOutlinedRegionsChange: (regions: RemovedRegion[]) => void;
 }
 
 interface RemovedRegion {
@@ -40,9 +40,9 @@ export default function ImagePreview({
   brushRadius,
   revealMode,
   imageRemovedRegions,
-  gridRemovedRegions,
+  gridOutlinedRegions,
   onImageRemovedRegionsChange,
-  onGridRemovedRegionsChange,
+  onGridOutlinedRegionsChange,
 }: ImagePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -69,7 +69,7 @@ export default function ImagePreview({
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
     if (!ctx) return;
 
     const img = new Image();
@@ -110,7 +110,7 @@ export default function ImagePreview({
       const fullResCanvas = document.createElement('canvas');
       fullResCanvas.width = img.width;
       fullResCanvas.height = img.height;
-      const fullResCtx = fullResCanvas.getContext('2d');
+      const fullResCtx = fullResCanvas.getContext('2d', { willReadFrequently: true });
       if (!fullResCtx) return;
 
       // Draw original image at full resolution
@@ -141,7 +141,7 @@ export default function ImagePreview({
   // Optimized render function
   const renderImage = useCallback(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext('2d', { willReadFrequently: true });
     const img = imageRef.current;
     const dimensions = dimensionsRef.current;
     const tempCanvas = tempCanvasRef.current;
@@ -149,144 +149,103 @@ export default function ImagePreview({
 
     if (!canvas || !ctx || !img || !dimensions || !tempCanvas || !quadtree) return;
 
-    // Clear any pending render
-    if (renderTimeoutRef.current) {
-      window.clearTimeout(renderTimeoutRef.current);
+    // Create a temporary canvas at full resolution
+    tempCanvas.width = dimensions.width;
+    tempCanvas.height = dimensions.height;
+    const tempCtx = tempCanvas.getContext('2d', { willReadFrequently: true });
+    if (!tempCtx) return;
+
+    // Draw the original image at full resolution
+    tempCtx.drawImage(img, 0, 0);
+
+    // Draw the quadtree effect
+    renderQuadTree(
+      tempCtx, 
+      quadtree, 
+      settings.outlineColor, 
+      settings.outlineWidth, 
+      [], // No outlines in base render
+      false // No outlines for now
+    );
+
+    // Restore original pixels for image-removed regions (always)
+    if (imageRemovedRegions.length > 0) {
+      // Create a temporary canvas for the original image
+      const originalCanvas = document.createElement('canvas');
+      originalCanvas.width = dimensions.width;
+      originalCanvas.height = dimensions.height;
+      const originalCtx = originalCanvas.getContext('2d', { willReadFrequently: true });
+      if (!originalCtx) return;
+
+      // Draw original image
+      originalCtx.drawImage(img, 0, 0);
+
+      // Restore pixels from original image at exact boundaries
+      imageRemovedRegions.forEach(region => {
+        const regionImageData = originalCtx.getImageData(
+          region.x,
+          region.y,
+          region.width,
+          region.height
+        );
+        tempCtx.putImageData(regionImageData, region.x, region.y);
+      });
     }
 
-    // Schedule render for next frame
-    renderTimeoutRef.current = window.setTimeout(() => {
-      // Create a temporary canvas at full resolution
-      tempCanvas.width = dimensions.width;
-      tempCanvas.height = dimensions.height;
-      const tempCtx = tempCanvas.getContext('2d');
-      if (!tempCtx) return;
+    // Clear the display canvas
+    ctx.clearRect(0, 0, dimensions.displayWidth, dimensions.displayHeight);
 
-      // Draw the original image at full resolution
-      tempCtx.drawImage(img, 0, 0);
+    // Scale down to display size
+    ctx.drawImage(tempCanvas, 0, 0, dimensions.width, dimensions.height, 0, 0, dimensions.displayWidth, dimensions.displayHeight);
 
-      // Apply current mode's effect at full resolution
-      if (revealMode === 'image') {
-        // In image mode, first restore original pixels for image-removed regions
-        if (originalImageDataRef.current) {
-          imageRemovedRegions.forEach(region => {
-            // Skip invalid regions
-            if (region.width <= 0 || region.height <= 0) return;
-            
-            // Ensure region is within image bounds
-            const maxX = Math.min(region.x + region.width, originalImageDataRef.current!.width);
-            const maxY = Math.min(region.y + region.height, originalImageDataRef.current!.height);
-            const validWidth = maxX - region.x;
-            const validHeight = maxY - region.y;
-            
-            if (validWidth <= 0 || validHeight <= 0) return;
-            
-            // Create region data array with correct size
-            const regionData = new Uint8ClampedArray(validWidth * validHeight * 4);
-            const originalData = originalImageDataRef.current!.data;
-            const originalWidth = originalImageDataRef.current!.width;
-            
-            for (let y = 0; y < validHeight; y++) {
-              for (let x = 0; x < validWidth; x++) {
-                const originalIndex = ((region.y + y) * originalWidth + (region.x + x)) * 4;
-                const regionIndex = (y * validWidth + x) * 4;
-                
-                if (originalIndex + 3 < originalData.length) {
-                  regionData[regionIndex] = originalData[originalIndex];
-                  regionData[regionIndex + 1] = originalData[originalIndex + 1];
-                  regionData[regionIndex + 2] = originalData[originalIndex + 2];
-                  regionData[regionIndex + 3] = originalData[originalIndex + 3];
-                }
-              }
-            }
-            
-            const regionImageData = new ImageData(regionData, validWidth, validHeight);
-            tempCtx.putImageData(regionImageData, region.x, region.y);
-          });
-        }
-      }
+    // Draw outlines for grid mode regions (always)
+    if (gridOutlinedRegions.length > 0) {
+      const scaleX = dimensions.displayWidth / dimensions.width;
+      const scaleY = dimensions.displayHeight / dimensions.height;
+      gridOutlinedRegions.forEach(region => {
+        const displayRegion = {
+          x: region.x * scaleX,
+          y: region.y * scaleY,
+          width: region.width * scaleX,
+          height: region.height * scaleY
+        };
+        ctx.strokeStyle = settings.outlineColor;
+        ctx.lineWidth = settings.outlineWidth;
+        // Only offset the outlines for grid mode
+        const offset = settings.outlineWidth / 2;
+        ctx.strokeRect(
+          displayRegion.x + offset,
+          displayRegion.y + offset,
+          displayRegion.width - (offset * 2),
+          displayRegion.height - (offset * 2)
+        );
+      });
+    }
 
-      // Draw the quadtree effect (without outlines)
-      renderQuadTree(tempCtx, quadtree, settings.outlineColor, settings.outlineWidth, gridRemovedRegions, false);
-
-      // Clear the display canvas
-      ctx.clearRect(0, 0, dimensions.displayWidth, dimensions.displayHeight);
-
-      // Scale down to display size
-      ctx.drawImage(tempCanvas, 0, 0, dimensions.width, dimensions.height, 0, 0, dimensions.displayWidth, dimensions.displayHeight);
-
-      // Draw outlines at display resolution
-      if (settings.outlineWidth > 0) {
+    // Draw hover effect if there's a hovered region
+    if (hoveredRegions.length > 0) {
+      hoveredRegions.forEach(region => {
+        // Scale hover region to display size
         const scaleX = dimensions.displayWidth / dimensions.width;
         const scaleY = dimensions.displayHeight / dimensions.height;
-        
-        // Draw outlines for non-removed regions
-        ctx.strokeStyle = settings.outlineColor;
-        ctx.lineWidth = settings.outlineWidth * scaleX;
-        
-        const drawOutlines = (node: QuadTreeNode) => {
-          if (node.children) {
-            node.children.forEach(drawOutlines);
-          } else {
-            // Check if region is not in gridRemovedRegions
-            const isRemoved = gridRemovedRegions.some(region => 
-              region.x === node.region.x && 
-              region.y === node.region.y && 
-              region.width === node.region.width && 
-              region.height === node.region.height
-            );
-            
-            if (!isRemoved) {
-              ctx.strokeRect(
-                node.region.x * scaleX,
-                node.region.y * scaleY,
-                node.region.width * scaleX,
-                node.region.height * scaleY
-              );
-            }
-          }
+        const displayRegion = {
+          x: region.x * scaleX,
+          y: region.y * scaleY,
+          width: region.width * scaleX,
+          height: region.height * scaleY
         };
-        
-        drawOutlines(quadtree);
-      }
 
-      // Draw hover effect if there's a hovered region
-      if (hoveredRegions.length > 0) {
-        hoveredRegions.forEach(region => {
-          // Scale hover region to display size
-          const scaleX = dimensions.displayWidth / dimensions.width;
-          const scaleY = dimensions.displayHeight / dimensions.height;
-          const displayRegion = {
-            x: region.x * scaleX,
-            y: region.y * scaleY,
-            width: region.width * scaleX,
-            height: region.height * scaleY
-          };
-
-          if (revealMode === 'image') {
-            // In image mode, show only the white overlay
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-            ctx.fillRect(
-              displayRegion.x,
-              displayRegion.y,
-              displayRegion.width,
-              displayRegion.height
-            );
-          } else {
-            // In grid mode, show only the neon green outline
-            ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = settings.outlineWidth * scaleX;
-            ctx.strokeRect(
-              displayRegion.x,
-              displayRegion.y,
-              displayRegion.width,
-              displayRegion.height
-            );
-          }
-        });
-      }
-    }, 0);
-  }, [settings.outlineColor, settings.outlineWidth, hoveredRegions, imageRemovedRegions, gridRemovedRegions, revealMode]);
+        // Show white overlay for both modes
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.fillRect(
+          displayRegion.x,
+          displayRegion.y,
+          displayRegion.width,
+          displayRegion.height
+        );
+      });
+    }
+  }, [settings.outlineColor, settings.outlineWidth, hoveredRegions, imageRemovedRegions, gridOutlinedRegions, revealMode]);
 
   // Debounced mouse move handler
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -317,7 +276,14 @@ export default function ImagePreview({
         if (revealMode === 'image') {
           onImageRemovedRegionsChange([...imageRemovedRegions, ...newRegions]);
         } else {
-          onGridRemovedRegionsChange([...gridRemovedRegions, ...newRegions]);
+          // In grid mode, add outlines for regions that don't already have them
+          const existingRegions = new Set(gridOutlinedRegions.map(r => 
+            `${r.x},${r.y},${r.width},${r.height}`
+          ));
+          const uniqueNewRegions = newRegions.filter(region => 
+            !existingRegions.has(`${region.x},${region.y},${region.width},${region.height}`)
+          );
+          onGridOutlinedRegionsChange([...gridOutlinedRegions, ...uniqueNewRegions]);
         }
       }
     } else {
@@ -334,7 +300,7 @@ export default function ImagePreview({
         setHoveredRegions([]);
       }
     }
-  }, [isDragging, brushRadius, imageRemovedRegions, gridRemovedRegions, revealMode, onImageRemovedRegionsChange, onGridRemovedRegionsChange]);
+  }, [isDragging, brushRadius, imageRemovedRegions, gridOutlinedRegions, revealMode, onImageRemovedRegionsChange, onGridOutlinedRegionsChange]);
 
   const isPointInCircle = (point: Point, center: Point, radius: number): boolean => {
     const dx = point.x - center.x;
@@ -386,6 +352,7 @@ export default function ImagePreview({
 
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
     setIsDragging(true);
+    setHoveredRegions([]); // Clear hover effect on click
     handleMouseMove(e); // Remove region on initial click
   };
 
@@ -406,7 +373,7 @@ export default function ImagePreview({
 
   const handleReset = () => {
     onImageRemovedRegionsChange([]);
-    onGridRemovedRegionsChange([]);
+    onGridOutlinedRegionsChange([]);
     setHoveredRegions([]);
     setIsDragging(false);
     setCursorPosition(null);
@@ -438,7 +405,14 @@ export default function ImagePreview({
       if (revealMode === 'image') {
         onImageRemovedRegionsChange([...imageRemovedRegions, ...newRegions]);
       } else {
-        onGridRemovedRegionsChange([...gridRemovedRegions, ...newRegions]);
+        // In grid mode, add outlines for regions that don't already have them
+        const existingRegions = new Set(gridOutlinedRegions.map(r => 
+          `${r.x},${r.y},${r.width},${r.height}`
+        ));
+        const uniqueNewRegions = newRegions.filter(region => 
+          !existingRegions.has(`${region.x},${region.y},${region.width},${region.height}`)
+        );
+        onGridOutlinedRegionsChange([...gridOutlinedRegions, ...uniqueNewRegions]);
       }
     }
   };

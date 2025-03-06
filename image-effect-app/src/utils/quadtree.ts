@@ -221,9 +221,16 @@ export function renderQuadTree(
       
       // Draw outline if enabled
       if (drawOutlines && outlineWidth > 0) {
+        // Inset the outline by half the outline width to prevent overlap
+        const inset = outlineWidth / 2;
         ctx.strokeStyle = outlineColor;
         ctx.lineWidth = outlineWidth;
-        ctx.strokeRect(node.region.x, node.region.y, node.region.width, node.region.height);
+        ctx.strokeRect(
+          node.region.x + inset,
+          node.region.y + inset,
+          node.region.width - outlineWidth,
+          node.region.height - outlineWidth
+        );
       }
     }
   }

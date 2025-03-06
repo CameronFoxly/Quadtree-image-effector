@@ -16,14 +16,14 @@ interface Region {
 
 function App() {
   const [imageUrl, setImageUrl] = useState<string | null>(null)
-  const [varianceThreshold, setVarianceThreshold] = useState(50)
+  const [varianceThreshold, setVarianceThreshold] = useState(1000)
   const [maxLevel, setMaxLevel] = useState(6)
   const [outlineColor, setOutlineColor] = useState('#FFFFFF')
   const [outlineWidth, setOutlineWidth] = useState(0.2)
   const [brushRadius, setBrushRadius] = useState(15)
   const [revealMode, setRevealMode] = useState<RevealMode>('image')
   const [imageRemovedRegions, setImageRemovedRegions] = useState<Region[]>([])
-  const [gridRemovedRegions, setGridRemovedRegions] = useState<Region[]>([])
+  const [gridOutlinedRegions, setGridOutlinedRegions] = useState<Region[]>([])
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -92,11 +92,11 @@ function App() {
 
       tempCtx.drawImage(img, 0, 0);
 
-      if (revealMode === 'image') {
-        // In image mode, render the quadtree with outlines for non-removed regions
-        renderQuadTree(ctx, quadtree, outlineColor, outlineWidth, gridRemovedRegions);
-        
-        // Restore original pixels for image-removed regions
+      // Render the quadtree effect
+      renderQuadTree(ctx, quadtree, outlineColor, outlineWidth, [], false);
+
+      // Restore original pixels for image-removed regions
+      if (imageRemovedRegions.length > 0) {
         imageRemovedRegions.forEach(region => {
           const regionImageData = tempCtx.getImageData(
             region.x,
@@ -106,9 +106,22 @@ function App() {
           );
           ctx.putImageData(regionImageData, region.x, region.y);
         });
-      } else {
-        // In grid mode, render the quadtree with outlines only for non-removed regions
-        renderQuadTree(ctx, quadtree, outlineColor, outlineWidth, gridRemovedRegions);
+      }
+
+      // Draw outlines for grid mode regions
+      if (gridOutlinedRegions.length > 0) {
+        gridOutlinedRegions.forEach(region => {
+          ctx.strokeStyle = outlineColor;
+          ctx.lineWidth = outlineWidth;
+          // Only offset the outlines for grid mode
+          const offset = outlineWidth / 2;
+          ctx.strokeRect(
+            region.x + offset,
+            region.y + offset,
+            region.width - (offset * 2),
+            region.height - (offset * 2)
+          );
+        });
       }
 
       // Convert to blob and download
@@ -147,9 +160,9 @@ function App() {
                   brushRadius={brushRadius}
                   revealMode={revealMode}
                   imageRemovedRegions={imageRemovedRegions}
-                  gridRemovedRegions={gridRemovedRegions}
+                  gridOutlinedRegions={gridOutlinedRegions}
                   onImageRemovedRegionsChange={setImageRemovedRegions}
-                  onGridRemovedRegionsChange={setGridRemovedRegions}
+                  onGridOutlinedRegionsChange={setGridOutlinedRegions}
                 />
               </div>
               <div className="controlsSection">
@@ -172,7 +185,7 @@ function App() {
                     className="button buttonSecondary"
                     onClick={() => {
                       setImageRemovedRegions([]);
-                      setGridRemovedRegions([]);
+                      setGridOutlinedRegions([]);
                     }}
                   >
                     Reset
