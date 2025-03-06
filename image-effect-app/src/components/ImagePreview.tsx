@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './ImagePreview.module.css';
-import { createQuadTree, renderQuadTree, QuadTreeNode } from '../utils/quadtree';
+import { createQuadTree, renderQuadTree, QuadTreeNode, findRegionsInBrush } from '../utils/quadtree';
 
 interface EffectSettings {
   varianceThreshold: number;

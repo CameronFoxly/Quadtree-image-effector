@@ -250,4 +250,37 @@ const createBranchNode = (region: Region, children: QuadTreeNode[], level: numbe
   children,
   level,
   maxLevel
-}); 
+});
+
+export function findRegionsInBrush(node: QuadTreeNode, point: Point, radius: number): QuadTreeNode[] {
+  const regions: QuadTreeNode[] = [];
+
+  function isInBrush(region: Region): boolean {
+    // Check if any corner of the region is within the brush radius
+    const corners = [
+      { x: region.x, y: region.y },
+      { x: region.x + region.width, y: region.y },
+      { x: region.x, y: region.y + region.height },
+      { x: region.x + region.width, y: region.y + region.height }
+    ];
+
+    return corners.some(corner => {
+      const dx = corner.x - point.x;
+      const dy = corner.y - point.y;
+      return (dx * dx + dy * dy) <= radius * radius;
+    });
+  }
+
+  function traverse(node: QuadTreeNode) {
+    if (isInBrush(node.region)) {
+      if (node.children) {
+        node.children.forEach(traverse);
+      } else {
+        regions.push(node);
+      }
+    }
+  }
+
+  traverse(node);
+  return regions;
+} 
