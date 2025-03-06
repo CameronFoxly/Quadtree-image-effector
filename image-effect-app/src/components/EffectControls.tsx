@@ -33,20 +33,20 @@ export default function EffectControls({
     <div className={styles.controls}>
       <div className={styles.controlGroup}>
         <label className={styles.label}>
-          Reveal Mode
+          Brush Mode
         </label>
         <div className={styles.modeToggle}>
           <button
             className={`${styles.modeButton} ${revealMode === 'image' ? styles.modeButtonActive : ''}`}
             onClick={() => onRevealModeChange('image')}
           >
-            Image
+            Reveal image
           </button>
           <button
             className={`${styles.modeButton} ${revealMode === 'grid' ? styles.modeButtonActive : ''}`}
             onClick={() => onRevealModeChange('grid')}
           >
-            Grid
+            Add outlines
           </button>
         </div>
       </div>
