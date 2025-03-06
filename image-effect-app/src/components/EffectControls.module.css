@@ -2,17 +2,21 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  padding: 1.5rem;
-  background-color: var(--bg-color-hover);
-  border-radius: 0.5rem;
-  max-width: 42rem;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .controlGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
+}
+
+.sliderContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
 }
 
 .label {
@@ -29,13 +33,13 @@
 }
 
 .slider {
-  width: 100%;
+  flex: 1;
   height: 4px;
   background: var(--border-color);
   border-radius: 2px;
   outline: none;
   -webkit-appearance: none;
-  margin: 0.5rem 0;
+  margin: 0;
 }
 
 /* Track styles */
@@ -324,4 +328,25 @@
 
 .dark .modeButtonActive:hover {
   background-color: var(--primary-color-dark) !important;
+}
+
+.valueInput {
+  width: 4rem;
+  padding: 0.25rem 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  background: var(--surface-color);
+  color: var(--text-color);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+.valueInput:focus {
+  outline: none;
+  border-color: var(--accent-color);
+}
+
+.dark .valueInput {
+  border-color: var(--border-color-dark);
+  background-color: var(--surface-color);
 } 

@@ -76,9 +76,12 @@
 }
 
 .controlsSection {
-  width: 400px;
+  width: 42rem;
   flex-shrink: 0;
   padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 /* When there's no image, center the upload UI */
@@ -91,7 +94,7 @@
   display: flex;
   gap: 1rem;
   justify-content: center;
-  margin-top: 1.5rem;
+  margin-top: auto;
 }
 
 .button {

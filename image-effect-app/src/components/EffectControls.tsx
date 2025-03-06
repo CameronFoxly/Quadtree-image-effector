@@ -52,54 +52,74 @@ export default function EffectControls({
       </div>
 
       <div className={styles.controlGroup}>
-        <label className={styles.label}>
-          Variance Threshold
-          <span className={styles.value}>{varianceThreshold}</span>
-        </label>
-        <input
-          type="range"
-          min="0"
-          max="2000"
-          value={varianceThreshold}
-          onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
-          className={styles.slider}
-        />
+        <label className={styles.label}>Variance Threshold</label>
+        <div className={styles.sliderContainer}>
+          <input
+            type="range"
+            min="0"
+            max="2000"
+            value={varianceThreshold}
+            onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+            className={styles.slider}
+          />
+          <input
+            type="number"
+            value={varianceThreshold}
+            onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+            className={styles.valueInput}
+            min="0"
+            max="2000"
+          />
+        </div>
       </div>
 
       <div className={styles.controlGroup}>
-        <label className={styles.label}>
-          Max Subdivision Level
-          <span className={styles.value}>{maxLevel}</span>
-        </label>
-        <input
-          type="range"
-          min="1"
-          max="8"
-          value={maxLevel}
-          onChange={(e) => onMaxLevelChange(Number(e.target.value))}
-          className={styles.slider}
-        />
+        <label className={styles.label}>Max Subdivision Level</label>
+        <div className={styles.sliderContainer}>
+          <input
+            type="range"
+            min="1"
+            max="8"
+            value={maxLevel}
+            onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+            className={styles.slider}
+          />
+          <input
+            type="number"
+            value={maxLevel}
+            onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+            className={styles.valueInput}
+            min="1"
+            max="8"
+          />
+        </div>
       </div>
 
       <div className={styles.controlGroup}>
-        <label className={styles.label}>
-          Brush Size
-          <span className={styles.value}>{brushRadius * 2}px</span>
-        </label>
-        <input
-          type="range"
-          min="5"
-          max="50"
-          value={brushRadius}
-          onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
-          className={styles.slider}
-        />
+        <label className={styles.label}>Brush Size</label>
+        <div className={styles.sliderContainer}>
+          <input
+            type="range"
+            min="5"
+            max="50"
+            value={brushRadius}
+            onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
+            className={styles.slider}
+          />
+          <input
+            type="number"
+            value={brushRadius * 2}
+            onChange={(e) => onBrushRadiusChange(Number(e.target.value) / 2)}
+            className={styles.valueInput}
+            min="10"
+            max="100"
+            step="2"
+          />
+        </div>
       </div>
 
       <div className={styles.controlGroup}>
-        <label className={styles.label}>
-          Outline Color
-        </label>
+        <label className={styles.label}>Outline Color</label>
         <input
           type="color"
           value={outlineColor}
@@ -109,19 +129,27 @@ export default function EffectControls({
       </div>
 
       <div className={styles.controlGroup}>
-        <label className={styles.label}>
-          Outline Width
-          <span className={styles.value}>{outlineWidth.toFixed(1)}px</span>
-        </label>
-        <input
-          type="range"
-          min="0"
-          max="3"
-          step="0.1"
-          value={outlineWidth}
-          onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
-          className={styles.slider}
-        />
+        <label className={styles.label}>Outline Width</label>
+        <div className={styles.sliderContainer}>
+          <input
+            type="range"
+            min="0"
+            max="3"
+            step="0.1"
+            value={outlineWidth}
+            onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+            className={styles.slider}
+          />
+          <input
+            type="number"
+            value={outlineWidth}
+            onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+            className={styles.valueInput}
+            min="0"
+            max="3"
+            step="0.1"
+          />
+        </div>
       </div>
     </div>
   );
