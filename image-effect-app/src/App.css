@@ -107,13 +107,18 @@
 }
 
 .buttonPrimary {
-  background-color: var(--primary-color);
+  background-color: var(--accent-color);
   color: white;
   border: none;
 }
 
 .buttonPrimary:hover {
-  background-color: var(--primary-color-dark);
+  background-color: var(--accent-hover);
+}
+
+.buttonPrimary.selected {
+  background-color: var(--accent-color);
+  color: white;
 }
 
 .buttonSecondary {
@@ -226,6 +231,11 @@ body {
 
 .buttonPrimary:hover {
   background-color: var(--accent-hover);
+}
+
+.buttonPrimary.selected {
+  background-color: var(--accent-color);
+  color: white;
 }
 
 .buttonSecondary {

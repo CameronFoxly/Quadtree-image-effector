@@ -307,9 +307,9 @@
 }
 
 .modeButtonActive {
-  background: #333;
+  background: var(--accent-color);
   color: white;
-  border-color: #333;
+  border-color: var(--accent-color);
 }
 
 .valueInput {
