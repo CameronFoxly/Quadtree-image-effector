@@ -5,7 +5,7 @@ import EffectControls from './components/EffectControls'
 import { createQuadTree, renderQuadTree } from './utils/quadtree'
 import './App.css'
 
-type RevealMode = 'image' | 'grid';
+type RevealMode = 'image' | 'grid' | 'conceal' | 'remove-outlines';
 
 interface Region {
   x: number;
@@ -187,30 +187,13 @@ function App() {
                   onBrushRadiusChange={setBrushRadius}
                   revealMode={revealMode}
                   onRevealModeChange={setRevealMode}
+                  onReset={() => {
+                    setImageRemovedRegions([]);
+                    setGridOutlinedRegions([]);
+                  }}
+                  onUploadNewImage={() => setImageUrl(null)}
+                  onDownloadImage={handleDownload}
                 />
-                <div className="buttonGroup">
-                  <button
-                    className="button buttonSecondary"
-                    onClick={() => {
-                      setImageRemovedRegions([]);
-                      setGridOutlinedRegions([]);
-                    }}
-                  >
-                    Reset
-                  </button>
-                  <button
-                    className="button buttonSecondary"
-                    onClick={() => setImageUrl(null)}
-                  >
-                    Upload New Image
-                  </button>
-                  <button
-                    className="button buttonPrimary"
-                    onClick={handleDownload}
-                  >
-                    Download Image
-                  </button>
-                </div>
               </div>
             </>
           )}

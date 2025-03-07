@@ -13,7 +13,7 @@ interface ImagePreviewProps {
   imageUrl: string;
   settings: EffectSettings;
   brushRadius: number;
-  revealMode: 'image' | 'grid';
+  revealMode: 'image' | 'grid' | 'conceal' | 'remove-outlines';
   imageRemovedRegions: RemovedRegion[];
   gridOutlinedRegions: RemovedRegion[];
   onImageRemovedRegionsChange: (regions: RemovedRegion[]) => void;
@@ -274,7 +274,7 @@ export default function ImagePreview({
 
         if (revealMode === 'image') {
           onImageRemovedRegionsChange([...imageRemovedRegions, ...newRegions]);
-        } else {
+        } else if (revealMode === 'grid') {
           // In grid mode, add outlines for regions that don't already have them
           const existingRegions = new Set(gridOutlinedRegions.map(r => 
             `${r.x},${r.y},${r.width},${r.height}`
@@ -283,21 +283,71 @@ export default function ImagePreview({
             !existingRegions.has(`${region.x},${region.y},${region.width},${region.height}`)
           );
           onGridOutlinedRegionsChange([...gridOutlinedRegions, ...uniqueNewRegions]);
+        } else if (revealMode === 'conceal') {
+          // In conceal mode, remove regions that are currently revealed
+          const existingRegions = new Set(imageRemovedRegions.map(r => 
+            `${r.x},${r.y},${r.width},${r.height}`
+          ));
+          const regionsToKeep = imageRemovedRegions.filter(region => {
+            const key = `${region.x},${region.y},${region.width},${region.height}`;
+            const isInBrush = newRegions.some(newRegion => 
+              `${newRegion.x},${newRegion.y},${newRegion.width},${newRegion.height}` === key
+            );
+            return !isInBrush;
+          });
+          onImageRemovedRegionsChange(regionsToKeep);
+        } else if (revealMode === 'remove-outlines') {
+          // In remove-outlines mode, remove regions that are currently outlined
+          const regionsToKeep = gridOutlinedRegions.filter(region => {
+            const key = `${region.x},${region.y},${region.width},${region.height}`;
+            const isInBrush = newRegions.some(newRegion => 
+              `${newRegion.x},${newRegion.y},${newRegion.width},${newRegion.height}` === key
+            );
+            return !isInBrush;
+          });
+          onGridOutlinedRegionsChange(regionsToKeep);
         }
       }
+    }
+
+    // Update hovered regions
+    const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+    if (regions.length > 0) {
+      const newRegions = regions.map(node => ({
+        x: node.region.x,
+        y: node.region.y,
+        width: node.region.width,
+        height: node.region.height
+      }));
+
+      // Only show hover effect for:
+      // - Unrevealed regions in 'image' mode
+      // - Unoutlined regions in 'grid' mode
+      // - Revealed regions in 'conceal' mode
+      // - Outlined regions in 'remove-outlines' mode
+      const existingImageRegions = new Set(imageRemovedRegions.map(r => 
+        `${r.x},${r.y},${r.width},${r.height}`
+      ));
+      const existingGridRegions = new Set(gridOutlinedRegions.map(r => 
+        `${r.x},${r.y},${r.width},${r.height}`
+      ));
+
+      const hoveredRegions = newRegions.filter(region => {
+        const key = `${region.x},${region.y},${region.width},${region.height}`;
+        if (revealMode === 'image') {
+          return !existingImageRegions.has(key);
+        } else if (revealMode === 'grid') {
+          return !existingGridRegions.has(key);
+        } else if (revealMode === 'conceal') {
+          return existingImageRegions.has(key);
+        } else { // remove-outlines mode
+          return existingGridRegions.has(key);
+        }
+      });
+
+      setHoveredRegions(hoveredRegions);
     } else {
-      // Update hovered regions
-      const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
-      if (regions.length > 0) {
-        setHoveredRegions(regions.map(node => ({
-          x: node.region.x,
-          y: node.region.y,
-          width: node.region.width,
-          height: node.region.height
-        })));
-      } else {
-        setHoveredRegions([]);
-      }
+      setHoveredRegions([]);
     }
   }, [isDragging, brushRadius, imageRemovedRegions, gridOutlinedRegions, revealMode, onImageRemovedRegionsChange, onGridOutlinedRegionsChange]);
 

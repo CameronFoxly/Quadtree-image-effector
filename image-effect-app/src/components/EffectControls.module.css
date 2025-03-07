@@ -281,53 +281,35 @@
 
 .modeToggle {
   display: flex;
-  gap: 0.5rem;
-  width: 100%;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.modeRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
 }
 
 .modeButton {
-  flex: 1;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  border-radius: 0.375rem;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s;
-  font-size: 0.875rem;
-}
-
-.modeButton:hover {
-  background-color: var(--bg-color-hover);
+  background: white;
+  color: #333;
+  text-align: center;
+  height: 100%;
+  min-height: 36px;
+  transition: all 0.2s ease;
 }
 
 .modeButtonActive {
-  background-color: var(--primary-color) !important;
-  color: white !important;
-  border-color: var(--primary-color) !important;
-}
-
-.modeButtonActive:hover {
-  background-color: var(--primary-color-dark) !important;
-}
-
-.dark .modeButton {
-  border-color: var(--border-color-dark);
-  background-color: var(--bg-color-dark);
-}
-
-.dark .modeButton:hover {
-  background-color: var(--bg-color-hover-dark);
-}
-
-.dark .modeButtonActive {
-  background-color: var(--primary-color) !important;
-  color: white !important;
-  border-color: var(--primary-color) !important;
-}
-
-.dark .modeButtonActive:hover {
-  background-color: var(--primary-color-dark) !important;
+  background: #333;
+  color: white;
+  border-color: #333;
 }
 
 .valueInput {

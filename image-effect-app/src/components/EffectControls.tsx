@@ -11,8 +11,11 @@ interface EffectControlsProps {
   onOutlineWidthChange: (value: number) => void;
   brushRadius: number;
   onBrushRadiusChange: (value: number) => void;
-  revealMode: 'image' | 'grid';
-  onRevealModeChange: (mode: 'image' | 'grid') => void;
+  revealMode: 'image' | 'grid' | 'conceal' | 'remove-outlines';
+  onRevealModeChange: (mode: 'image' | 'grid' | 'conceal' | 'remove-outlines') => void;
+  onReset: () => void;
+  onUploadNewImage: () => void;
+  onDownloadImage: () => void;
 }
 
 export default function EffectControls({
@@ -28,6 +31,9 @@ export default function EffectControls({
   onBrushRadiusChange,
   revealMode,
   onRevealModeChange,
+  onReset,
+  onUploadNewImage,
+  onDownloadImage,
 }: EffectControlsProps) {
   return (
     <div className={styles.controls}>
@@ -36,18 +42,34 @@ export default function EffectControls({
           Brush Mode
         </label>
         <div className={styles.modeToggle}>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'image' ? styles.modeButtonActive : ''}`}
-            onClick={() => onRevealModeChange('image')}
-          >
-            Reveal image
-          </button>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'grid' ? styles.modeButtonActive : ''}`}
-            onClick={() => onRevealModeChange('grid')}
-          >
-            Add outlines
-          </button>
+          <div className={styles.modeRow}>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'image' ? styles.modeButtonActive : ''}`}
+              onClick={() => onRevealModeChange('image')}
+            >
+              Reveal image
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'conceal' ? styles.modeButtonActive : ''}`}
+              onClick={() => onRevealModeChange('conceal')}
+            >
+              Conceal image
+            </button>
+          </div>
+          <div className={styles.modeRow}>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'grid' ? styles.modeButtonActive : ''}`}
+              onClick={() => onRevealModeChange('grid')}
+            >
+              Add outlines
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'remove-outlines' ? styles.modeButtonActive : ''}`}
+              onClick={() => onRevealModeChange('remove-outlines')}
+            >
+              Remove outlines
+            </button>
+          </div>
         </div>
       </div>
 
