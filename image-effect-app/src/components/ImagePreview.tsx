@@ -254,16 +254,21 @@ export default function ImagePreview({
     const rect = canvas.getBoundingClientRect();
     const dimensions = dimensionsRef.current;
     
-    // Scale mouse coordinates to match full resolution
-    const scaleX = dimensions.width / dimensions.displayWidth;
-    const scaleY = dimensions.height / dimensions.displayHeight;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
+    // Calculate the actual CSS scale factor
+    const cssScaleX = rect.width / canvas.width;
+    const cssScaleY = rect.height / canvas.height;
+    
+    // Adjust the mouse coordinates for both CSS scaling and image scaling
+    const x = ((e.clientX - rect.left) / cssScaleX) * (dimensions.width / dimensions.displayWidth);
+    const y = ((e.clientY - rect.top) / cssScaleY) * (dimensions.height / dimensions.displayHeight);
 
-    setCursorPosition({ x: e.clientX, y: e.clientY });
+    setCursorPosition({ 
+      x: e.clientX, 
+      y: e.clientY 
+    });
 
     if (isDragging) {
-      const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+      const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * (dimensions.width / dimensions.displayWidth));
       if (regions.length > 0) {
         const newRegions = regions.map(node => ({
           x: node.region.x,
@@ -311,7 +316,7 @@ export default function ImagePreview({
     }
 
     // Update hovered regions
-    const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+    const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * (dimensions.width / dimensions.displayWidth));
     if (regions.length > 0) {
       const newRegions = regions.map(node => ({
         x: node.region.x,
@@ -436,13 +441,15 @@ export default function ImagePreview({
     const rect = canvas.getBoundingClientRect();
     const dimensions = dimensionsRef.current;
     
-    // Scale mouse coordinates to match full resolution
-    const scaleX = dimensions.width / dimensions.displayWidth;
-    const scaleY = dimensions.height / dimensions.displayHeight;
-    const x = (e.clientX - rect.left) * scaleX;
-    const y = (e.clientY - rect.top) * scaleY;
+    // Calculate the actual CSS scale factor
+    const cssScaleX = rect.width / canvas.width;
+    const cssScaleY = rect.height / canvas.height;
+    
+    // Adjust the mouse coordinates for both CSS scaling and image scaling
+    const x = ((e.clientX - rect.left) / cssScaleX) * (dimensions.width / dimensions.displayWidth);
+    const y = ((e.clientY - rect.top) / cssScaleY) * (dimensions.height / dimensions.displayHeight);
 
-    const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * scaleX);
+    const regions = findRegionsInBrush(quadtreeRef.current, { x, y }, brushRadius * (dimensions.width / dimensions.displayWidth));
     if (regions.length > 0) {
       const newRegions = regions.map(node => ({
         x: node.region.x,
