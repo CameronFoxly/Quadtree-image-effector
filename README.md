@@ -1,6 +1,6 @@
 # Quadtree Image Effector
 
-A web appthat applies quadtree-based effects to pixalate images, and then allows users to selectively reveal the original image or grid structure through brushing interactions, before downloading the resulting image as a png. 
+A web app that applies quadtree-based effects to pixalate images, and then allows users to selectively reveal the original image or grid structure through brushing interactions, before downloading the resulting image as a png. 
 
 Latest build deployed to:
 
