@@ -20,7 +20,7 @@ function App() {
   const [maxLevel, setMaxLevel] = useState(6)
   const [outlineColor, setOutlineColor] = useState('#FFFFFF')
   const [outlineWidth, setOutlineWidth] = useState(0.5)
-  const [brushRadius, setBrushRadius] = useState(15)
+  const [brushRadius, setBrushRadius] = useState(50)
   const [revealMode, setRevealMode] = useState<RevealMode>('image')
   const [imageRemovedRegions, setImageRemovedRegions] = useState<Region[]>([])
   const [gridOutlinedRegions, setGridOutlinedRegions] = useState<Region[]>([])
@@ -58,7 +58,7 @@ function App() {
       setMaxLevel(6);
       setOutlineColor('#FFFFFF');
       setOutlineWidth(0.5);
-      setBrushRadius(15);
+      setBrushRadius(50);
       setRevealMode('image');
     } catch (error) {
       // Silently handle error

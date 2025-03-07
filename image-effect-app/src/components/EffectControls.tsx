@@ -122,8 +122,8 @@ export default function EffectControls({
         <div className={styles.sliderContainer}>
           <input
             type="range"
-            min="5"
-            max="50"
+            min="1"
+            max="200"
             value={brushRadius}
             onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
             className={styles.slider}
@@ -133,8 +133,8 @@ export default function EffectControls({
             value={brushRadius * 2}
             onChange={(e) => onBrushRadiusChange(Number(e.target.value) / 2)}
             className={styles.valueInput}
-            min="10"
-            max="100"
+            min="2"
+            max="400"
             step="2"
           />
         </div>
