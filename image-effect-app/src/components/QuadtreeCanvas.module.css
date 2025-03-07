@@ -1,0 +1,11 @@
+.canvas {
+  position: relative;
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.cell {
+  position: absolute;
+  will-change: opacity;
+  backface-visibility: hidden;
+} 
