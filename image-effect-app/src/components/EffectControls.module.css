@@ -331,4 +331,44 @@
 .dark .valueInput {
   border-color: var(--border-color-dark);
   background-color: var(--surface-color);
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
+  padding: 16px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+}
+
+.button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  text-align: center;
+}
+
+.buttonPrimary {
+  background-color: #333;
+  color: white;
+}
+
+.buttonPrimary:hover {
+  background-color: #444;
+}
+
+.buttonSecondary {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+.buttonSecondary:hover {
+  background-color: #d0d0d0;
 } 

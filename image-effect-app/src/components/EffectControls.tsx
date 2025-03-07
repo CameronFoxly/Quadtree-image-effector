@@ -173,6 +173,27 @@ export default function EffectControls({
           />
         </div>
       </div>
+
+      <div className={styles.buttonGroup}>
+        <button
+          className={`${styles.button} ${styles.buttonSecondary}`}
+          onClick={onReset}
+        >
+          Reset
+        </button>
+        <button
+          className={`${styles.button} ${styles.buttonSecondary}`}
+          onClick={onUploadNewImage}
+        >
+          Upload new image
+        </button>
+        <button
+          className={`${styles.button} ${styles.buttonPrimary}`}
+          onClick={onDownloadImage}
+        >
+          Download
+        </button>
+      </div>
     </div>
   );
 } 
