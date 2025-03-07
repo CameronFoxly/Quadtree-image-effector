@@ -74,17 +74,13 @@ export default function ImagePreview({
     img.src = imageUrl;
 
     img.onload = () => {
-      // Calculate dimensions to fill the left side of the viewport with 10% padding
-      const containerWidth = window.innerWidth * 0.5; // 50% of viewport width
-      const containerHeight = window.innerHeight; // Full viewport height
-      
-      // Calculate available space with 10% padding
-      const availableWidth = containerWidth * 0.9;
-      const availableHeight = containerHeight * 0.9;
+      // Calculate dimensions to fill the viewport minus the control panel width and padding
+      const containerWidth = window.innerWidth - 300 - 64; // Viewport width minus control panel and padding
+      const containerHeight = window.innerHeight - 64; // Full viewport height minus padding
       
       // Calculate scaling factors to maintain aspect ratio
-      const scaleX = availableWidth / img.width;
-      const scaleY = availableHeight / img.height;
+      const scaleX = containerWidth / img.width;
+      const scaleY = containerHeight / img.height;
       const scale = Math.min(scaleX, scaleY);
       
       // Calculate display dimensions
