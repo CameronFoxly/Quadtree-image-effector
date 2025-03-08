@@ -2,6 +2,28 @@ import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './ImagePreview.module.css';
 import { createQuadTree, renderQuadTree, QuadTreeNode, findRegionsInBrush } from '../utils/quadtree';
 
+type RevealMode = 'image' | 'grid' | 'conceal' | 'remove-outlines' | 'add-color' | 'remove-color';
+type BlendMode = 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten' | 
+                 'color-burn' | 'color-dodge' | 'soft-light' | 'hard-light' | 'color';
+
+interface Region {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+interface TintedRegion extends Region {
+  color: string;
+  blendMode: BlendMode;
+  opacity: number;
+}
+
+interface Point {
+  x: number;
+  y: number;
+}
+
 interface EffectSettings {
   varianceThreshold: number;
   maxLevel: number;
@@ -13,23 +35,22 @@ interface ImagePreviewProps {
   imageUrl: string;
   settings: EffectSettings;
   brushRadius: number;
-  revealMode: 'image' | 'grid' | 'conceal' | 'remove-outlines';
-  imageRemovedRegions: RemovedRegion[];
-  gridOutlinedRegions: RemovedRegion[];
-  onImageRemovedRegionsChange: (regions: RemovedRegion[]) => void;
-  onGridOutlinedRegionsChange: (regions: RemovedRegion[]) => void;
-}
-
-interface RemovedRegion {
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-}
-
-interface Point {
-  x: number;
-  y: number;
+  revealMode: RevealMode;
+  imageRemovedRegions: Region[];
+  gridOutlinedRegions: Region[];
+  tintedRegions: TintedRegion[];
+  fillColor: string;
+  blendMode: BlendMode;
+  tintOpacity: number;
+  onImageRemovedRegionsChange: (regions: Region[]) => void;
+  onGridOutlinedRegionsChange: (regions: Region[]) => void;
+  onTintedRegionsChange: (regions: TintedRegion[]) => void;
+  onBatchOperationStart: () => void;
+  onBatchOperationEnd: (
+    newImageRegions: Region[], 
+    newGridRegions: Region[],
+    newTintedRegions: TintedRegion[]
+  ) => void;
 }
 
 export default function ImagePreview({
@@ -39,8 +60,15 @@ export default function ImagePreview({
   revealMode,
   imageRemovedRegions,
   gridOutlinedRegions,
+  tintedRegions,
+  fillColor,
+  blendMode,
+  tintOpacity,
   onImageRemovedRegionsChange,
   onGridOutlinedRegionsChange,
+  onTintedRegionsChange,
+  onBatchOperationStart,
+  onBatchOperationEnd,
 }: ImagePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -49,7 +77,7 @@ export default function ImagePreview({
   const originalImageDataRef = useRef<ImageData | null>(null);
   const tempCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const renderTimeoutRef = useRef<number | null>(null);
-  const [hoveredRegions, setHoveredRegions] = useState<RemovedRegion[]>([]);
+  const [hoveredRegions, setHoveredRegions] = useState<Region[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [cursorPosition, setCursorPosition] = useState<Point | null>(null);
   const [isHovering, setIsHovering] = useState(false);
@@ -192,6 +220,33 @@ export default function ImagePreview({
     // Scale down to display size
     ctx.drawImage(tempCanvas, 0, 0, dimensions.width, dimensions.height, 0, 0, dimensions.displayWidth, dimensions.displayHeight);
 
+    // Draw tinted regions
+    if (tintedRegions.length > 0) {
+      const scaleX = dimensions.displayWidth / dimensions.width;
+      const scaleY = dimensions.displayHeight / dimensions.height;
+      
+      tintedRegions.forEach(region => {
+        const displayRegion = {
+          x: region.x * scaleX,
+          y: region.y * scaleY,
+          width: region.width * scaleX,
+          height: region.height * scaleY
+        };
+
+        ctx.save();
+        ctx.globalCompositeOperation = region.blendMode;
+        ctx.globalAlpha = region.opacity / 100;
+        ctx.fillStyle = region.color;
+        ctx.fillRect(
+          displayRegion.x,
+          displayRegion.y,
+          displayRegion.width,
+          displayRegion.height
+        );
+        ctx.restore();
+      });
+    }
+
     // Draw outlines for grid mode regions (always)
     if (gridOutlinedRegions.length > 0 && settings.outlineWidth > 0) {
       const scaleX = dimensions.displayWidth / dimensions.width;
@@ -219,10 +274,10 @@ export default function ImagePreview({
 
     // Draw hover effect if there's a hovered region
     if (hoveredRegions.length > 0) {
+      const scaleX = dimensions.displayWidth / dimensions.width;
+      const scaleY = dimensions.displayHeight / dimensions.height;
+      
       hoveredRegions.forEach(region => {
-        // Scale hover region to display size
-        const scaleX = dimensions.displayWidth / dimensions.width;
-        const scaleY = dimensions.displayHeight / dimensions.height;
         const displayRegion = {
           x: region.x * scaleX,
           y: region.y * scaleY,
@@ -230,17 +285,34 @@ export default function ImagePreview({
           height: region.height * scaleY
         };
 
-        // Show white overlay for both modes
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        ctx.save();
+        if (revealMode === 'add-color') {
+          ctx.globalCompositeOperation = blendMode;
+          ctx.globalAlpha = 0.5; // 50% opacity for hover preview
+          ctx.fillStyle = fillColor;
+        } else {
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+        }
         ctx.fillRect(
           displayRegion.x,
           displayRegion.y,
           displayRegion.width,
           displayRegion.height
         );
+        ctx.restore();
       });
     }
-  }, [settings.outlineColor, settings.outlineWidth, hoveredRegions, imageRemovedRegions, gridOutlinedRegions, revealMode]);
+  }, [
+    settings.outlineColor,
+    settings.outlineWidth,
+    hoveredRegions,
+    imageRemovedRegions,
+    gridOutlinedRegions,
+    tintedRegions,
+    revealMode,
+    fillColor,
+    blendMode
+  ]);
 
   // Debounced mouse move handler
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
@@ -307,6 +379,32 @@ export default function ImagePreview({
             return !isInBrush;
           });
           onGridOutlinedRegionsChange(regionsToKeep);
+        } else if (revealMode === 'add-color') {
+          // Add color to regions that don't already have it
+          const existingRegions = new Set(tintedRegions.map(r => 
+            `${r.x},${r.y},${r.width},${r.height}`
+          ));
+          const uniqueNewRegions = newRegions
+            .filter(region => 
+              !existingRegions.has(`${region.x},${region.y},${region.width},${region.height}`)
+            )
+            .map(region => ({
+              ...region,
+              color: fillColor,
+              blendMode: blendMode,
+              opacity: tintOpacity
+            }));
+          onTintedRegionsChange([...tintedRegions, ...uniqueNewRegions]);
+        } else if (revealMode === 'remove-color') {
+          // Remove color from regions that have it
+          const regionsToKeep = tintedRegions.filter(region => {
+            const key = `${region.x},${region.y},${region.width},${region.height}`;
+            const isInBrush = newRegions.some(newRegion => 
+              `${newRegion.x},${newRegion.y},${newRegion.width},${newRegion.height}` === key
+            );
+            return !isInBrush;
+          });
+          onTintedRegionsChange(regionsToKeep);
         }
       }
     }
@@ -326,10 +424,15 @@ export default function ImagePreview({
       // - Unoutlined regions in 'grid' mode
       // - Revealed regions in 'conceal' mode
       // - Outlined regions in 'remove-outlines' mode
+      // - Untinted regions in 'add-color' mode
+      // - Tinted regions in 'remove-color' mode
       const existingImageRegions = new Set(imageRemovedRegions.map(r => 
         `${r.x},${r.y},${r.width},${r.height}`
       ));
       const existingGridRegions = new Set(gridOutlinedRegions.map(r => 
+        `${r.x},${r.y},${r.width},${r.height}`
+      ));
+      const existingTintRegions = new Set(tintedRegions.map(r => 
         `${r.x},${r.y},${r.width},${r.height}`
       ));
 
@@ -341,8 +444,12 @@ export default function ImagePreview({
           return !existingGridRegions.has(key);
         } else if (revealMode === 'conceal') {
           return existingImageRegions.has(key);
-        } else { // remove-outlines mode
+        } else if (revealMode === 'remove-outlines') {
           return existingGridRegions.has(key);
+        } else if (revealMode === 'add-color') {
+          return !existingTintRegions.has(key);
+        } else { // remove-color mode
+          return existingTintRegions.has(key);
         }
       });
 
@@ -350,7 +457,20 @@ export default function ImagePreview({
     } else {
       setHoveredRegions([]);
     }
-  }, [isDragging, brushRadius, imageRemovedRegions, gridOutlinedRegions, revealMode, onImageRemovedRegionsChange, onGridOutlinedRegionsChange]);
+  }, [
+    isDragging,
+    brushRadius,
+    imageRemovedRegions,
+    gridOutlinedRegions,
+    tintedRegions,
+    revealMode,
+    onImageRemovedRegionsChange,
+    onGridOutlinedRegionsChange,
+    onTintedRegionsChange,
+    fillColor,
+    blendMode,
+    tintOpacity
+  ]);
 
   const isPointInCircle = (point: Point, center: Point, radius: number): boolean => {
     const dx = point.x - center.x;
@@ -424,6 +544,7 @@ export default function ImagePreview({
   const handleReset = () => {
     onImageRemovedRegionsChange([]);
     onGridOutlinedRegionsChange([]);
+    onTintedRegionsChange([]);
     setHoveredRegions([]);
     setIsDragging(false);
     setCursorPosition(null);
