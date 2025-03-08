@@ -288,7 +288,7 @@ export default function ImagePreview({
         ctx.save();
         if (revealMode === 'add-color') {
           ctx.globalCompositeOperation = blendMode;
-          ctx.globalAlpha = 0.5; // 50% opacity for hover preview
+          ctx.globalAlpha = tintOpacity / 100; // Use actual opacity
           ctx.fillStyle = fillColor;
         } else {
           ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
@@ -311,7 +311,8 @@ export default function ImagePreview({
     tintedRegions,
     revealMode,
     fillColor,
-    blendMode
+    blendMode,
+    tintOpacity
   ]);
 
   // Debounced mouse move handler
@@ -380,21 +381,26 @@ export default function ImagePreview({
           });
           onGridOutlinedRegionsChange(regionsToKeep);
         } else if (revealMode === 'add-color') {
-          // Add color to regions that don't already have it
-          const existingRegions = new Set(tintedRegions.map(r => 
-            `${r.x},${r.y},${r.width},${r.height}`
-          ));
-          const uniqueNewRegions = newRegions
-            .filter(region => 
-              !existingRegions.has(`${region.x},${region.y},${region.width},${region.height}`)
-            )
-            .map(region => ({
-              ...region,
-              color: fillColor,
-              blendMode: blendMode,
-              opacity: tintOpacity
-            }));
-          onTintedRegionsChange([...tintedRegions, ...uniqueNewRegions]);
+          // Add color to regions, including those that already have color
+          const newRegions = regions.map(node => ({
+            x: node.region.x,
+            y: node.region.y,
+            width: node.region.width,
+            height: node.region.height,
+            color: fillColor,
+            blendMode: blendMode,
+            opacity: tintOpacity
+          }));
+
+          // Create a map of region keys to their latest color settings
+          const regionMap = new Map();
+          [...tintedRegions, ...newRegions].forEach(region => {
+            const key = `${region.x},${region.y},${region.width},${region.height}`;
+            regionMap.set(key, region);
+          });
+
+          // Convert map back to array, keeping only the latest color for each region
+          onTintedRegionsChange(Array.from(regionMap.values()));
         } else if (revealMode === 'remove-color') {
           // Remove color from regions that have it
           const regionsToKeep = tintedRegions.filter(region => {
@@ -447,7 +453,7 @@ export default function ImagePreview({
         } else if (revealMode === 'remove-outlines') {
           return existingGridRegions.has(key);
         } else if (revealMode === 'add-color') {
-          return !existingTintRegions.has(key);
+          return true; // Allow hovering over all regions, including those already colored
         } else { // remove-color mode
           return existingTintRegions.has(key);
         }
