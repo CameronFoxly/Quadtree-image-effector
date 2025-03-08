@@ -110,126 +110,6 @@ export default function EffectControls({
       </div>
 
       <div className={styles.section}>
-        <h3>Quadtree Settings</h3>
-        <div className={styles.control}>
-          <label>Variance Threshold</label>
-          <div className={styles.sliderContainer}>
-            <input
-              type="range"
-              min="0"
-              max="2000"
-              value={varianceThreshold}
-              onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
-            />
-            <input
-              type="number"
-              value={varianceThreshold}
-              onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
-              className={styles.numberInput}
-            />
-          </div>
-        </div>
-
-        <div className={styles.control}>
-          <label>Max Level</label>
-          <div className={styles.sliderContainer}>
-            <input
-              type="range"
-              min="1"
-              max="10"
-              value={maxLevel}
-              onChange={(e) => onMaxLevelChange(Number(e.target.value))}
-            />
-            <input
-              type="number"
-              value={maxLevel}
-              onChange={(e) => onMaxLevelChange(Number(e.target.value))}
-              className={styles.numberInput}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.section}>
-        <h3>Grid Settings</h3>
-        <div className={styles.control}>
-          <label>Outline Color</label>
-          <input
-            type="color"
-            value={outlineColor}
-            onChange={(e) => onOutlineColorChange(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.control}>
-          <label>Outline Width</label>
-          <div className={styles.sliderContainer}>
-            <input
-              type="range"
-              min="0"
-              max="5"
-              step="0.1"
-              value={outlineWidth}
-              onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
-            />
-            <input
-              type="number"
-              value={outlineWidth}
-              onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
-              className={styles.numberInput}
-              step="0.1"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.section}>
-        <h3>Color Overlay</h3>
-        <div className={styles.control}>
-          <label>Fill Color</label>
-          <input
-            type="color"
-            value={fillColor}
-            onChange={(e) => onFillColorChange(e.target.value)}
-          />
-        </div>
-
-        <div className={styles.control}>
-          <label>Blend Mode</label>
-          <select
-            value={blendMode}
-            onChange={(e) => onBlendModeChange(e.target.value as BlendMode)}
-            className={styles.select}
-          >
-            {blendModes.map(mode => (
-              <option key={mode} value={mode}>
-                {mode.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className={styles.control}>
-          <label>Opacity</label>
-          <div className={styles.sliderContainer}>
-            <input
-              type="range"
-              min="0"
-              max="100"
-              value={tintOpacity}
-              onChange={(e) => onTintOpacityChange(Number(e.target.value))}
-            />
-            <input
-              type="number"
-              value={tintOpacity}
-              onChange={(e) => onTintOpacityChange(Number(e.target.value))}
-              className={styles.numberInput}
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.section}>
         <h3>Brush Size</h3>
         <div className={styles.control}>
           <div className={styles.sliderContainer}>
@@ -249,6 +129,135 @@ export default function EffectControls({
           </div>
         </div>
       </div>
+
+      {/* Quadtree Settings - Only show for image reveal/conceal modes */}
+      {(revealMode === 'image' || revealMode === 'conceal') && (
+        <div className={styles.section}>
+          <h3>Quadtree Settings</h3>
+          <div className={styles.control}>
+            <label>Variance Threshold</label>
+            <div className={styles.sliderContainer}>
+              <input
+                type="range"
+                min="0"
+                max="2000"
+                value={varianceThreshold}
+                onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+              />
+              <input
+                type="number"
+                value={varianceThreshold}
+                onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+                className={styles.numberInput}
+              />
+            </div>
+          </div>
+
+          <div className={styles.control}>
+            <label>Max Level</label>
+            <div className={styles.sliderContainer}>
+              <input
+                type="range"
+                min="1"
+                max="10"
+                value={maxLevel}
+                onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+              />
+              <input
+                type="number"
+                value={maxLevel}
+                onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+                className={styles.numberInput}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Grid Settings - Only show for grid modes */}
+      {(revealMode === 'grid' || revealMode === 'remove-outlines') && (
+        <div className={styles.section}>
+          <h3>Grid Settings</h3>
+          <div className={styles.control}>
+            <label>Outline Color</label>
+            <input
+              type="color"
+              value={outlineColor}
+              onChange={(e) => onOutlineColorChange(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.control}>
+            <label>Outline Width</label>
+            <div className={styles.sliderContainer}>
+              <input
+                type="range"
+                min="0"
+                max="5"
+                step="0.1"
+                value={outlineWidth}
+                onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+              />
+              <input
+                type="number"
+                value={outlineWidth}
+                onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+                className={styles.numberInput}
+                step="0.1"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Color Overlay Settings - Only show for color modes */}
+      {(revealMode === 'add-color' || revealMode === 'remove-color') && (
+        <div className={styles.section}>
+          <h3>Color Overlay</h3>
+          <div className={styles.control}>
+            <label>Fill Color</label>
+            <input
+              type="color"
+              value={fillColor}
+              onChange={(e) => onFillColorChange(e.target.value)}
+            />
+          </div>
+
+          <div className={styles.control}>
+            <label>Blend Mode</label>
+            <select
+              value={blendMode}
+              onChange={(e) => onBlendModeChange(e.target.value as BlendMode)}
+              className={styles.select}
+            >
+              {blendModes.map(mode => (
+                <option key={mode} value={mode}>
+                  {mode.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className={styles.control}>
+            <label>Opacity</label>
+            <div className={styles.sliderContainer}>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={tintOpacity}
+                onChange={(e) => onTintOpacityChange(Number(e.target.value))}
+              />
+              <input
+                type="number"
+                value={tintOpacity}
+                onChange={(e) => onTintOpacityChange(Number(e.target.value))}
+                className={styles.numberInput}
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className={styles.section}>
         <h3>Actions</h3>
