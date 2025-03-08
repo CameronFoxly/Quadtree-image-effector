@@ -112,11 +112,20 @@ export default function EffectControls({
       <div className={styles.section}>
         <h3>Brush Size</h3>
         <div className={styles.control}>
+          <div className={styles.brushPreviewContainer}>
+            <div 
+              className={styles.brushPreview}
+              style={{
+                width: `${brushRadius * 2}px`,
+                height: `${brushRadius * 2}px`
+              }}
+            />
+          </div>
           <div className={styles.sliderContainer}>
             <input
               type="range"
-              min="5"
-              max="50"
+              min="1"
+              max="400"
               value={brushRadius}
               onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
             />

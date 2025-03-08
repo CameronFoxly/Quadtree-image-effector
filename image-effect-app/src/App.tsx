@@ -35,7 +35,7 @@ function App() {
   const [maxLevel, setMaxLevel] = useState(6)
   const [outlineColor, setOutlineColor] = useState('#FFFFFF')
   const [outlineWidth, setOutlineWidth] = useState(0.5)
-  const [brushRadius, setBrushRadius] = useState(50)
+  const [brushRadius, setBrushRadius] = useState(100)
   const [revealMode, setRevealMode] = useState<RevealMode>('image')
   const [imageRemovedRegions, setImageRemovedRegions] = useState<Region[]>([])
   const [gridOutlinedRegions, setGridOutlinedRegions] = useState<Region[]>([])
@@ -58,9 +58,9 @@ function App() {
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === '+' || e.key === '=') {
-        setBrushRadius(prev => Math.min(prev + 10, 50))
+        setBrushRadius(prev => Math.min(prev + 20, 400))
       } else if (e.key === '-' || e.key === '_') {
-        setBrushRadius(prev => Math.max(prev - 10, 5))
+        setBrushRadius(prev => Math.max(prev - 20, 1))
       }
     }
 
@@ -88,7 +88,7 @@ function App() {
       setMaxLevel(6);
       setOutlineColor('#FFFFFF');
       setOutlineWidth(0.5);
-      setBrushRadius(50);
+      setBrushRadius(100);
       setRevealMode('image');
     } catch (error) {
       // Silently handle error
