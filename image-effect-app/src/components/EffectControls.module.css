@@ -512,4 +512,66 @@ input[type="color"]::-webkit-color-swatch {
   border: 1.5px solid rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   pointer-events: none;
+}
+
+.colorInputContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.colorInputLabel {
+  font-size: 0.8125rem;
+  color: var(--text-color);
+}
+
+.colorInputWrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.colorPicker {
+  flex: 1;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  cursor: pointer;
+}
+
+.colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorPicker::-webkit-color-swatch {
+  border: none;
+  border-radius: 2px;
+}
+
+.eyedropperButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--background-color);
+  color: var(--text-color);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.eyedropperButton:hover {
+  background: var(--background-color-hover);
+  border-color: var(--border-color-hover);
+}
+
+.eyedropperButton.active {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--text-on-accent);
 } 

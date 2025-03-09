@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './EffectControls.module.css';
+import ColorInput from './ColorInput';
 
 type RevealMode = 'image' | 'grid' | 'conceal' | 'remove-outlines' | 'add-color' | 'remove-color';
 type BlendMode = 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten' | 
@@ -188,11 +189,10 @@ export default function EffectControls({
         <div className={styles.section}>
           <h3>Grid Settings</h3>
           <div className={styles.control}>
-            <label>Outline Color</label>
-            <input
-              type="color"
+            <ColorInput
+              label="Outline Color"
               value={outlineColor}
-              onChange={(e) => onOutlineColorChange(e.target.value)}
+              onChange={onOutlineColorChange}
             />
           </div>
 
@@ -224,11 +224,10 @@ export default function EffectControls({
         <div className={styles.section}>
           <h3>Color Overlay</h3>
           <div className={styles.control}>
-            <label>Fill Color</label>
-            <input
-              type="color"
+            <ColorInput
+              label="Fill Color"
               value={fillColor}
-              onChange={(e) => onFillColorChange(e.target.value)}
+              onChange={onFillColorChange}
             />
           </div>
 
@@ -291,10 +290,16 @@ export default function EffectControls({
           <button onClick={onUploadNewImage} className={styles.actionButton}>
             New Image
           </button>
-          <button onClick={onDownloadImage} className={styles.actionButton}>
-            Download
-          </button>
         </div>
+      </div>
+
+      <div className={styles.section}>
+        <button 
+          onClick={onDownloadImage} 
+          className={styles.downloadButton}
+        >
+          Download Image
+        </button>
       </div>
     </div>
   );
