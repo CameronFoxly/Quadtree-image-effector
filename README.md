@@ -6,6 +6,8 @@ Latest build deployed to:
 
 https://cameronfoxly.github.io/Quadtree-image-effector/
 
+![screenshot](image-effect-app/public/screenshot.jpg)
+
 ## Features
 
 - **Image Upload**: Support for uploading and processing any image file
