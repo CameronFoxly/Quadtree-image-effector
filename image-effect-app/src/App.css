@@ -44,7 +44,7 @@
 .controlsSection {
   width: 300px;
   min-width: 300px;
-  background-color: var(--panel-bg);
+  background-color: transparent;
   border-radius: 0.5rem 0 0 0.5rem;
   overflow-y: auto;
   overflow-x: hidden;
@@ -236,5 +236,5 @@ select {
 /* Dark mode styles */
 .dark .previewSection,
 .dark .controlsSection {
-  background-color: var(--panel-bg-dark);
+  background-color: transparent;
 }
