@@ -1,80 +1,64 @@
 :root {
-  --primary-color: #3b82f6;
-  --primary-color-dark: #2563eb;
-  --bg-color: #363636;
-  --bg-color-dark: #282828;
-  --bg-color-hover: #242424;
-  --bg-color-hover-dark: #2d2d2d;
-  --text-color: #111827;
-  --text-color-secondary: #6b7280;
-  --text-color-dark: #f9fafb;
-  --text-color-secondary-dark: #9ca3af;
-  --border-color: #e5e7eb;
-  --border-color-dark: #374151;
+  /* Colors */
+  --bg-color: #F0EFEE;
+  --panel-bg: #F9F7F3;
+  --text-color: #353535;
+  --text-muted: #8B8B8B;
+  --border-color: #353535;
+  --slider-thumb-color: #353535;
+  
+  /* Font */
+  --font-family: 'IBM Plex Mono', monospace;
+  
+  /* Sizes */
+  --panel-width: 239px;
+  --header-height: 3.5rem;
+  --section-gap: 0.25rem;
+  --border-width: 0.25px;
+  --border-radius: 0.3125rem;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-family);
   background-color: var(--bg-color);
   color: var(--text-color);
-  transition: background-color 0.2s, color 0.2s;
+  -webkit-font-smoothing: antialiased;
 }
 
-body.dark {
-  background-color: var(--bg-color-dark);
-  color: var(--text-color-dark);
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 0.625rem;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: var(--primary-color);
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-button:hover {
-  background-color: var(--primary-color-dark);
+::-webkit-scrollbar-thumb {
+  background: var(--text-color);
+  border-radius: 0.1875rem;
 }
 
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color);
 }
 
-input[type="range"] {
-  width: 100%;
-  height: 4px;
-  background: var(--border-color);
-  border-radius: 2px;
-  outline: none;
-  -webkit-appearance: none;
+.app {
+  display: flex;
+  height: 100vh;
+  background-color: var(--bg-color);
 }
 
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
-  background: var(--primary-color);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-input[type="range"]::-webkit-slider-thumb:hover {
-  background: var(--primary-color-dark);
-}
-
-.dark input[type="range"] {
-  background: var(--border-color-dark);
+.canvas-container {
+  flex: 1;
+  background-color: var(--panel-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

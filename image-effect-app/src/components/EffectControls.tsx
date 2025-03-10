@@ -68,51 +68,58 @@ export default function EffectControls({
 
   return (
     <div className={styles.controls}>
+      <div className={styles.header}>
+        <h1>Quadtree Editor</h1>
+      </div>
+
       <div className={styles.section}>
-        <h3>Mode</h3>
-        <div className={styles.modeGrid}>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'image' ? styles.active : ''}`}
-            onClick={() => onRevealModeChange('image')}
-          >
-            Reveal Image
-          </button>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'conceal' ? styles.active : ''}`}
-            onClick={() => onRevealModeChange('conceal')}
-          >
-            Conceal Image
-          </button>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'grid' ? styles.active : ''}`}
-            onClick={() => onRevealModeChange('grid')}
-          >
-            Add Grid
-          </button>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'remove-outlines' ? styles.active : ''}`}
-            onClick={() => onRevealModeChange('remove-outlines')}
-          >
-            Remove Grid
-          </button>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'add-color' ? styles.active : ''}`}
-            onClick={() => onRevealModeChange('add-color')}
-          >
-            Add Color
-          </button>
-          <button
-            className={`${styles.modeButton} ${revealMode === 'remove-color' ? styles.active : ''}`}
-            onClick={() => onRevealModeChange('remove-color')}
-          >
-            Remove Color
-          </button>
+        <div className={styles.sectionHeader}>
+          <h2>Brush mode</h2>
+        </div>
+        <div className={styles.sectionContent}>
+          <div className={styles.modeGrid}>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'image' ? styles.active : ''}`}
+              onClick={() => onRevealModeChange('image')}
+            >
+              Reveal image
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'conceal' ? styles.active : ''}`}
+              onClick={() => onRevealModeChange('conceal')}
+            >
+              Conceal image
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'grid' ? styles.active : ''}`}
+              onClick={() => onRevealModeChange('grid')}
+            >
+              Add grid
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'remove-outlines' ? styles.active : ''}`}
+              onClick={() => onRevealModeChange('remove-outlines')}
+            >
+              Remove grid
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'add-color' ? styles.active : ''}`}
+              onClick={() => onRevealModeChange('add-color')}
+            >
+              Add color
+            </button>
+            <button
+              className={`${styles.modeButton} ${revealMode === 'remove-color' ? styles.active : ''}`}
+              onClick={() => onRevealModeChange('remove-color')}
+            >
+              Remove color
+            </button>
+          </div>
         </div>
       </div>
 
       <div className={styles.section}>
-        <h3>Brush Size</h3>
-        <div className={styles.control}>
+        <div className={styles.sectionContent}>
           <div className={styles.brushPreviewContainer}>
             <div 
               className={styles.brushPreview}
@@ -122,16 +129,26 @@ export default function EffectControls({
               }}
             />
           </div>
+        </div>
+        <div className={styles.controlLabel}>Brush size</div>
+        <div className={styles.sectionContent}>
           <div className={styles.sliderContainer}>
+            <div 
+              className={styles.sliderTrack}
+              style={{
+                '--slider-position': `${((brushRadius - 1) / 399) * 100}%`
+              } as React.CSSProperties}
+            >
+              <input
+                type="range"
+                min="1"
+                max="400"
+                value={brushRadius}
+                onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
+              />
+            </div>
             <input
-              type="range"
-              min="1"
-              max="400"
-              value={brushRadius}
-              onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
-            />
-            <input
-              type="number"
+              type="text"
               value={brushRadius}
               onChange={(e) => onBrushRadiusChange(Number(e.target.value))}
               className={styles.numberInput}
@@ -143,19 +160,28 @@ export default function EffectControls({
       {/* Quadtree Settings - Only show for image reveal/conceal modes */}
       {(revealMode === 'image' || revealMode === 'conceal') && (
         <div className={styles.section}>
-          <h3>Quadtree Settings</h3>
-          <div className={styles.control}>
-            <label>Variance Threshold</label>
+          <div className={styles.sectionHeader}>
+            <h2>Quadtree settings</h2>
+          </div>
+          <div className={styles.sectionContent}>
+            <div className={styles.controlLabel}>Variance threshold</div>
             <div className={styles.sliderContainer}>
+              <div 
+                className={styles.sliderTrack}
+                style={{
+                  '--slider-position': `${((varianceThreshold) / 2000) * 100}%`
+                } as React.CSSProperties}
+              >
+                <input
+                  type="range"
+                  min="0"
+                  max="2000"
+                  value={varianceThreshold}
+                  onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+                />
+              </div>
               <input
-                type="range"
-                min="0"
-                max="2000"
-                value={varianceThreshold}
-                onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
-              />
-              <input
-                type="number"
+                type="text"
                 value={varianceThreshold}
                 onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
                 className={styles.numberInput}
@@ -163,18 +189,25 @@ export default function EffectControls({
             </div>
           </div>
 
-          <div className={styles.control}>
-            <label>Max Level</label>
+          <div className={styles.sectionContent}>
+            <div className={styles.controlLabel}>Max level</div>
             <div className={styles.sliderContainer}>
+              <div 
+                className={styles.sliderTrack}
+                style={{
+                  '--slider-position': `${((maxLevel - 1) / 9) * 100}%`
+                } as React.CSSProperties}
+              >
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={maxLevel}
+                  onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+                />
+              </div>
               <input
-                type="range"
-                min="1"
-                max="10"
-                value={maxLevel}
-                onChange={(e) => onMaxLevelChange(Number(e.target.value))}
-              />
-              <input
-                type="number"
+                type="text"
                 value={maxLevel}
                 onChange={(e) => onMaxLevelChange(Number(e.target.value))}
                 className={styles.numberInput}
@@ -187,8 +220,10 @@ export default function EffectControls({
       {/* Grid Settings - Only show for grid modes */}
       {(revealMode === 'grid' || revealMode === 'remove-outlines') && (
         <div className={styles.section}>
-          <h3>Grid Settings</h3>
-          <div className={styles.control}>
+          <div className={styles.sectionHeader}>
+            <h2>Grid settings</h2>
+          </div>
+          <div className={styles.sectionContent}>
             <ColorInput
               label="Outline Color"
               value={outlineColor}
@@ -196,23 +231,29 @@ export default function EffectControls({
             />
           </div>
 
-          <div className={styles.control}>
-            <label>Outline Width</label>
+          <div className={styles.controlLabel}>Outline Width</div>
+          <div className={styles.sectionContent}>
             <div className={styles.sliderContainer}>
+              <div 
+                className={styles.sliderTrack}
+                style={{
+                  '--slider-position': `${(outlineWidth / 5) * 100}%`
+                } as React.CSSProperties}
+              >
+                <input
+                  type="range"
+                  min="0"
+                  max="5"
+                  step="0.1"
+                  value={outlineWidth}
+                  onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+                />
+              </div>
               <input
-                type="range"
-                min="0"
-                max="5"
-                step="0.1"
-                value={outlineWidth}
-                onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
-              />
-              <input
-                type="number"
+                type="text"
                 value={outlineWidth}
                 onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
                 className={styles.numberInput}
-                step="0.1"
               />
             </div>
           </div>
@@ -222,8 +263,10 @@ export default function EffectControls({
       {/* Color Overlay Settings - Only show for color modes */}
       {(revealMode === 'add-color' || revealMode === 'remove-color') && (
         <div className={styles.section}>
-          <h3>Color Overlay</h3>
-          <div className={styles.control}>
+          <div className={styles.sectionHeader}>
+            <h2>Color overlay</h2>
+          </div>
+          <div className={styles.sectionContent}>
             <ColorInput
               label="Fill Color"
               value={fillColor}
@@ -231,8 +274,8 @@ export default function EffectControls({
             />
           </div>
 
-          <div className={styles.control}>
-            <label>Blend Mode</label>
+          <div className={styles.controlLabel}>Blend Mode</div>
+          <div className={styles.sectionContent}>
             <select
               value={blendMode}
               onChange={(e) => onBlendModeChange(e.target.value as BlendMode)}
@@ -246,18 +289,25 @@ export default function EffectControls({
             </select>
           </div>
 
-          <div className={styles.control}>
-            <label>Opacity</label>
+          <div className={styles.controlLabel}>Opacity</div>
+          <div className={styles.sectionContent}>
             <div className={styles.sliderContainer}>
+              <div 
+                className={styles.sliderTrack}
+                style={{
+                  '--slider-position': `${tintOpacity}%`
+                } as React.CSSProperties}
+              >
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={tintOpacity}
+                  onChange={(e) => onTintOpacityChange(Number(e.target.value))}
+                />
+              </div>
               <input
-                type="range"
-                min="0"
-                max="100"
-                value={tintOpacity}
-                onChange={(e) => onTintOpacityChange(Number(e.target.value))}
-              />
-              <input
-                type="number"
+                type="text"
                 value={tintOpacity}
                 onChange={(e) => onTintOpacityChange(Number(e.target.value))}
                 className={styles.numberInput}
@@ -268,7 +318,9 @@ export default function EffectControls({
       )}
 
       <div className={styles.section}>
-        <h3>Actions</h3>
+        <div className={styles.sectionHeader}>
+          <h2>Actions</h2>
+        </div>
         <div className={styles.buttonGrid}>
           <button
             onClick={onUndo}

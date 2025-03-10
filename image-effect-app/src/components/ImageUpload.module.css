@@ -5,12 +5,12 @@
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
-  background-color: var(--bg-color-hover);
+  background-color: var(--panel-bg);
 }
 
 .uploadContainer:hover,
 .uploadContainer.dragActive {
-  border-color: var(--primary-color);
+  border-color: var(--text-color);
   background-color: var(--bg-color);
 }
 
@@ -22,15 +22,21 @@
 }
 
 .uploadIcon {
-  width: 2.5rem;
-  height: 2.5rem;
-  color: var(--text-color-secondary);
+  width: 3rem;
+  height: 3rem;
+  margin-bottom: 1rem;
+  color: var(--text-color);
 }
 
 .uploadText {
   font-size: 1rem;
+  margin-bottom: 0.5rem;
   color: var(--text-color);
-  margin: 0;
+}
+
+.uploadSubtext {
+  font-size: 0.875rem;
+  color: var(--text-muted);
 }
 
 .uploadHint {
