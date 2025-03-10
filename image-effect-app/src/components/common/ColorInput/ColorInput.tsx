@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import styles from './EffectControls.module.css';
+import styles from './ColorInput.module.css';
+import { Button } from '../Button/Button';
+import { Label } from '../Label/Label';
 
 interface ColorInputProps {
   value: string;
@@ -13,7 +15,7 @@ const EyedropperIcon = () => (
   </svg>
 );
 
-export default function ColorInput({ value, onChange, label }: ColorInputProps) {
+export const ColorInput: React.FC<ColorInputProps> = ({ value, onChange, label }) => {
   const [isEyedropping, setIsEyedropping] = useState(false);
 
   const handleEyedropper = async () => {
@@ -35,23 +37,26 @@ export default function ColorInput({ value, onChange, label }: ColorInputProps) 
   };
 
   return (
-    <div className={styles.colorInputContainer}>
-      {label && <label className={styles.colorInputLabel}>{label}</label>}
-      <div className={styles.colorInputWrapper}>
+    <div className={styles.container}>
+      {label && <Label>{label}</Label>}
+      <div className={styles.wrapper}>
         <input
           type="color"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           className={styles.colorPicker}
         />
-        <button
+        <Button
           onClick={handleEyedropper}
-          className={`${styles.eyedropperButton} ${isEyedropping ? styles.active : ''}`}
+          className={styles.eyedropperButton}
+          active={isEyedropping}
           title="Pick color from screen"
-        >
-          <EyedropperIcon />
-        </button>
+          variant="action"
+          icon={<EyedropperIcon />}
+        >{''}</Button>
       </div>
     </div>
   );
-} 
+};
+
+export default ColorInput; 

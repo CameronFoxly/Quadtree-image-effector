@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  border-top: var(--border-width) solid var(--text-color);
+  margin-top: auto;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-xs);
+}
+
+.downloadButton {
+  width: 100%;
+  padding: var(--space-sm) !important;
+  font-size: var(--font-size-md) !important;
+  font-weight: 500 !important;
+}
+
+.historyActions,
+.mainActions {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+}
+
+.historyActions button {
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  font-size: var(--font-size-lg);
+  line-height: 1;
+} 

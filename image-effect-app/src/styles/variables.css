@@ -1,0 +1,43 @@
+:root {
+  /* Colors */
+  --color-bg-primary: #F9F7F3;
+  --color-bg-secondary: #F0EFEE;
+  --color-text-primary: #353535;
+  --color-text-secondary: #666666;
+  --color-border: #353535;
+  --color-accent: #353535;
+  --color-accent-hover: rgba(53, 53, 53, 0.9);
+  
+  /* Typography */
+  --font-family-mono: 'IBM Plex Mono', monospace;
+  --font-size-xs: 0.625rem;    /* 10px */
+  --font-size-sm: 0.75rem;     /* 12px */
+  --font-size-base: 0.875rem;  /* 14px */
+  --font-size-lg: 1rem;        /* 16px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  
+  /* Spacing */
+  --space-xs: 0.3125rem;       /* 5px */
+  --space-sm: 0.5rem;          /* 8px */
+  --space-md: 0.75rem;         /* 12px */
+  --space-lg: 1rem;            /* 16px */
+  --space-xl: 1.5rem;          /* 24px */
+  
+  /* Layout */
+  --panel-width: 239px;
+  --header-height: 3.5rem;
+  --border-width: 0.25px;
+  --border-radius-sm: 0.25rem;  /* 4px */
+  --border-radius-md: 0.3125rem; /* 5px */
+  --border-radius-lg: 0.625rem;  /* 10px */
+  
+  /* Transitions */
+  --transition-fast: 0.15s ease;
+  --transition-base: 0.2s ease;
+  
+  /* Z-index */
+  --z-index-base: 1;
+  --z-index-dropdown: 10;
+  --z-index-modal: 20;
+  --z-index-tooltip: 30;
+} 

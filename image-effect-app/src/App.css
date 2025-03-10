@@ -6,8 +6,8 @@
   margin: 0;
   padding: 0;
   overflow: hidden;
-  letter-spacing: -0.5px;
-  background-color: #F9F7F3;
+  letter-spacing: calc(var(--border-width) * -2);
+  background-color: var(--color-bg-primary);
 }
 
 .container {
@@ -16,6 +16,9 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-width: 100vw;
+  padding: var(--space-md);
+  box-sizing: border-box;
 }
 
 .content {
@@ -23,12 +26,17 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  max-height: 100vh;
 }
 
 .main {
   flex: 1;
   display: flex;
-  overflow: hidden;
+  overflow: visible;
+  max-width: 100%;
+  height: calc(100vh - var(--space-xl));
+  gap: var(--space-xs);
+  padding: var(--space-xs);
 }
 
 .previewSection {
@@ -36,32 +44,49 @@
   min-width: 0;
   position: relative;
   background-color: var(--panel-bg);
-  border-radius: 0.5rem;
-  border: var(--border-width) solid var(--text-color);
+  border-radius: var(--border-radius-lg);
+  border: var(--border-width) solid var(--color-text-primary);
   overflow: hidden;
-  margin: 1rem;
-  margin-right: 0;
+  max-height: 100%;
+  box-sizing: border-box;
+  margin: var(--space-xs);
+}
+
+.previewSection > div {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: calc(var(--space-xs) * -1);
+  padding-right: var(--space-xs);
 }
 
 .controlsSection {
-  width: 300px;
-  min-width: 300px;
-  background-color: transparent;
-  border-radius: 0.5rem 0 0 0.5rem;
+  width: var(--panel-width);
+  min-width: var(--panel-width);
+  max-width: var(--panel-width);
+  background-color: var(--color-bg-primary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.controlsSection > div {
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: var(--space-xs);
 }
 
 .controlsSection label {
-  font-size: 0.75rem;
+  font-size: var(--font-size-sm);
   text-transform: uppercase;
-  color: var(--text-secondary);
-  letter-spacing: -0.5px;
-  margin-bottom: 2px;
+  color: var(--color-text-secondary);
+  letter-spacing: calc(var(--border-width) * -2);
+  margin-bottom: var(--border-width);
 }
 
 .controlsSection input[type="range"] {
@@ -164,23 +189,219 @@ select:focus {
   border-color: var(--accent-color);
 }
 
-/* Scrollbar styles */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Dark mode specific styles */
+input[type="range"] {
+  height: var(--border-width);
+  margin: var(--space-xs) 0;
 }
 
-::-webkit-scrollbar-track {
-  background: var(--background-color);
+input[type="range"]::-webkit-slider-thumb {
+  width: var(--space-md);
+  height: var(--space-md);
 }
 
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 0;
+input[type="color"] {
+  height: var(--space-xl);
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-color);
+select {
+  padding: var(--space-xs);
+  font-size: var(--font-size-base);
+}
+
+/* Dark mode styles */
+.dark .previewSection,
+.dark .controlsSection {
+  background-color: transparent;
+}
+
+/* App styles */
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  letter-spacing: calc(var(--border-width) * -2);
+}
+
+/* Main layout */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Preview section */
+.previewSection {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--color-bg-secondary);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  position: relative;
+}
+
+.previewSection canvas {
+  margin: var(--space-lg);
+}
+
+/* Controls section */
+.controlsSection {
+  width: var(--panel-width);
+  min-width: var(--panel-width);
+  background: var(--color-bg-primary);
+  border-radius: var(--border-radius-lg);
+  padding: var(--space-xs);
+  overflow: hidden;
+}
+
+.controlsSection > div {
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-right: calc(var(--space-xs) * -1);
+  padding-right: var(--space-xs);
+}
+
+.controlsSection label {
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  letter-spacing: calc(var(--border-width) * -2);
+  margin-bottom: var(--border-width);
+}
+
+.controlsSection input[type="range"] {
+  width: 100%;
+  height: var(--border-width);
+  margin: var(--space-md) 0;
+  -webkit-appearance: none;
+}
+
+.controlsSection input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--space-lg);
+  height: var(--space-lg);
+  background: var(--color-text-primary);
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: calc(var(--border-width) * -24);
+}
+
+.controlsSection input[type="range"]::-moz-range-thumb {
+  width: var(--space-lg);
+  height: var(--space-lg);
+  background: var(--color-text-primary);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.controlsSection input[type="number"] {
+  background: var(--color-bg-primary);
+  border: var(--border-width) solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-base);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-width);
+  width: var(--space-xl);
+}
+
+/* Button styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-xs) var(--space-md);
+  background: var(--color-bg-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-width);
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  letter-spacing: calc(var(--border-width) * -2.4);
+}
+
+.button:hover {
+  background: var(--color-bg-secondary);
+}
+
+.button:active {
+  border: var(--border-width) solid transparent;
+  letter-spacing: calc(var(--border-width) * -2.4);
+}
+
+.button.active {
+  background: var(--color-text-primary);
+  color: var(--color-bg-primary);
+  letter-spacing: calc(var(--border-width) * -2.4);
+}
+
+/* Select styles */
+.select {
+  appearance: none;
+  background: var(--color-bg-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-width);
+  padding: var(--space-xs) var(--space-sm);
+  width: 100%;
+  font-size: var(--font-size-base);
+  color: var(--color-text-primary);
+  cursor: pointer;
+}
+
+/* Progress bar */
+.progressBar {
+  position: relative;
+  width: var(--border-width);
+  height: var(--border-width);
+  background: var(--color-bg-secondary);
+}
+
+.progressBar .fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: var(--space-xs);
+  background: var(--color-text-primary);
+}
+
+.progressBar .handle {
+  position: absolute;
+  top: 50%;
+  width: var(--space-sm);
+  height: var(--space-sm);
+  background: var(--color-text-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+
+/* Dark theme */
+.dark {
+  background: var(--color-bg-secondary);
+}
+
+.dark .previewSection,
+.dark .controlsSection {
+  background: var(--color-bg-primary);
+}
+
+/* Input styles */
+input[type="text"] {
+  height: var(--space-xl);
+}
+
+.input {
+  padding: var(--space-xs);
+  font-size: var(--font-size-base);
 }
 
 :root {
@@ -216,33 +437,7 @@ body {
 .buttonGroup {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  padding: 0 0.5rem;
-}
-
-/* Dark mode specific styles */
-input[type="range"] {
-  height: 3px;
-  margin: 0.5rem 0;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  width: 12px;
-  height: 12px;
-}
-
-input[type="color"] {
-  height: 32px;
-}
-
-select {
-  padding: 0.35rem;
-  font-size: 0.85rem;
-}
-
-/* Dark mode styles */
-.dark .previewSection,
-.dark .controlsSection {
-  background-color: transparent;
+  gap: var(--space-xs);
+  margin-top: var(--space-md);
+  padding: 0 var(--space-xs);
 }

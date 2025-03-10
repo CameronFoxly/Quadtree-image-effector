@@ -1,23 +1,8 @@
-:root {
-  /* Colors */
-  --bg-color: #F0EFEE;
-  --panel-bg: #F9F7F3;
-  --text-color: #353535;
-  --text-muted: #666666;
-  --border-color: #353535;
-  --slider-thumb-color: #353535;
-  
-  /* Font */
-  --font-family: 'IBM Plex Mono', monospace;
-  
-  /* Sizes */
-  --panel-width: 239px;
-  --header-height: 3.5rem;
-  --section-gap: 0.25rem;
-  --border-width: 0.25px;
-  --border-radius: 0.3125rem;
-}
+@import './styles/variables.css';
+@import './styles/components.css';
+@import './styles/utils.css';
 
+/* Reset and base styles */
 * {
   margin: 0;
   padding: 0;
@@ -25,9 +10,9 @@
 }
 
 body {
-  font-family: var(--font-family);
-  background-color: var(--bg-color);
-  color: var(--text-color);
+  font-family: var(--font-family-mono);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -41,23 +26,23 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--text-color);
-  border-radius: 0.1875rem;
+  background: var(--color-text-primary);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-color);
+  background: var(--color-accent);
 }
 
+/* App Layout */
 .app {
   display: flex;
   height: 100vh;
-  background-color: var(--bg-color);
+  background-color: var(--color-bg-secondary);
 }
 
 .canvas-container {
   flex: 1;
-  background-color: var(--panel-bg);
+  background-color: var(--color-bg-primary);
   display: flex;
   align-items: center;
   justify-content: center;

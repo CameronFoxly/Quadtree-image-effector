@@ -1,0 +1,47 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: 0;
+}
+
+.wrapper {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  padding: var(--space-xs);
+  padding-top: 0;
+}
+
+.colorPicker {
+  flex: 1;
+  height: var(--font-size-xl);
+  padding: var(--border-width);
+  border: var(--border-width) solid var(--color-text-primary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-bg-primary);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorPicker::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--border-radius-md) - var(--border-width));
+}
+
+.eyedropperButton {
+  height: 24px !important;
+  min-height: 24px !important;
+  width: 24px !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  border: var(--border-width) solid var(--color-text-primary) !important;
+  border-radius: var(--border-radius-md) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+} 

@@ -1,0 +1,114 @@
+/* Base Button Styles */
+.button-base {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+  padding: 0 var(--space-md);
+  font-size: var(--font-size-sm);
+  font-weight: 400;
+  font-family: var(--font-family-mono);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.button-base:hover:not(:disabled) {
+  background: var(--color-bg-secondary);
+}
+
+.button-base:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button-base.active {
+  color: var(--color-bg-primary);
+  font-weight: 500;
+  position: relative;
+  z-index: var(--z-index-base);
+}
+
+.button-base.active::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  background: var(--color-text-primary);
+  border-radius: calc(var(--border-radius-md) - 2px);
+  z-index: -1;
+}
+
+/* Section Styles */
+.section-base {
+  display: flex;
+  flex-direction: column;
+  border-bottom: var(--border-width) solid var(--color-border);
+}
+
+.section-header {
+  height: 1.5rem;
+  padding: 0 var(--space-xs);
+  border-top: var(--border-width) solid var(--color-border);
+  border-bottom: var(--border-width) solid var(--color-border);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+}
+
+.section-header h2 {
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  line-height: 1;
+  font-family: var(--font-family-mono);
+  margin: 0;
+}
+
+.section-content {
+  padding: var(--space-xs);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Remove padding when section-content contains components with their own padding/borders */
+.section-content:has(.label-base),
+.section-content:has([class*="label"]),
+.section-content:has(.label),
+.section-content:has([class*="ColorInput"]),
+.section-content:has([class*="Slider"]) {
+  padding: 0;
+}
+
+/* Input Styles */
+.input-base {
+  background: var(--color-bg-primary);
+  border: var(--border-width) solid var(--color-border);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  font-size: var(--font-size-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--border-radius-sm);
+}
+
+/* Grid Layout */
+.grid-2col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-xs);
+}
+
+/* Label Styles */
+.label-base {
+  font-size: var(--font-size-xs);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  font-family: var(--font-family-mono);
+} 

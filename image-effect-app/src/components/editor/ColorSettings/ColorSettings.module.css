@@ -1,0 +1,29 @@
+.selectContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: 0;
+}
+
+.selectWrapper {
+  display: flex;
+  padding: var(--space-xs);
+  padding-top: 0;
+}
+
+.selectWrapper select {
+  width: 100%;
+  padding: var(--space-xs) var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-family-mono);
+  background: var(--color-bg-primary);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  outline: none;
+}
+
+.selectWrapper select:focus {
+  border-color: var(--color-accent);
+} 

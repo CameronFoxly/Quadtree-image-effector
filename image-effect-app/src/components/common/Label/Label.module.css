@@ -1,0 +1,14 @@
+.label {
+  height: 1.25rem;
+  font-size: 0.5rem;  /* 8px */
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  border-top: var(--border-width) solid var(--color-text-primary);
+  border-bottom: var(--border-width) solid var(--color-text-primary);
+  font-family: var(--font-family-mono);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: var(--space-xs);
+} 
