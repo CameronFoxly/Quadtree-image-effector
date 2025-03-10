@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import styles from './ImagePreview.module.css';
 import { createQuadTree, renderQuadTree, QuadTreeNode, findRegionsInBrush } from '../utils/quadtree';
+import ImageUpload from './ImageUpload';
 
 type RevealMode = 'image' | 'grid' | 'conceal' | 'remove-outlines' | 'add-color' | 'remove-color';
 type BlendMode = 'multiply' | 'screen' | 'overlay' | 'darken' | 'lighten' | 
@@ -32,7 +33,7 @@ interface EffectSettings {
 }
 
 interface ImagePreviewProps {
-  imageUrl: string;
+  imageUrl: string | null;
   settings: EffectSettings;
   brushRadius: number;
   revealMode: RevealMode;
@@ -42,6 +43,7 @@ interface ImagePreviewProps {
   fillColor: string;
   blendMode: BlendMode;
   tintOpacity: number;
+  onImageSelect: (file: File) => void;
   onImageRemovedRegionsChange: (regions: Region[]) => void;
   onGridOutlinedRegionsChange: (regions: Region[]) => void;
   onTintedRegionsChange: (regions: TintedRegion[]) => void;
@@ -64,6 +66,7 @@ export default function ImagePreview({
   fillColor,
   blendMode,
   tintOpacity,
+  onImageSelect,
   onImageRemovedRegionsChange,
   onGridOutlinedRegionsChange,
   onTintedRegionsChange,
@@ -99,7 +102,7 @@ export default function ImagePreview({
     if (!ctx) return;
 
     const img = new Image();
-    img.src = imageUrl;
+    img.src = imageUrl || '';
 
     img.onload = () => {
       // Calculate dimensions to fill the viewport minus the control panel width and padding
@@ -603,37 +606,43 @@ export default function ImagePreview({
 
   return (
     <div className={styles.previewContainer}>
-      <canvas
-        ref={canvasRef}
-        className={styles.previewCanvas}
-        onMouseMove={handleMouseMove}
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onMouseEnter={handleMouseEnter}
-        style={{
-          cursor: 'none'
-        }}
-      />
-      {cursorPosition && isHovering && (
-        <div
-          className={styles.brushCursor}
-          style={{
-            left: cursorPosition.x,
-            top: cursorPosition.y,
-            width: brushRadius * 2,
-            height: brushRadius * 2,
-            border: '1.5px solid rgba(255, 255, 255, 0.5)',
-            borderRadius: '50%',
-            position: 'fixed',
-            pointerEvents: 'none',
-            zIndex: 1000,
-            transform: 'translate(-50%, -50%)',
-            backgroundColor: 'transparent',
-            background: 'transparent',
-            boxShadow: 'none'
-          }}
-        />
+      {imageUrl ? (
+        <>
+          <canvas
+            ref={canvasRef}
+            className={styles.previewCanvas}
+            onMouseMove={handleMouseMove}
+            onMouseDown={handleMouseDown}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseLeave}
+            onMouseEnter={handleMouseEnter}
+            style={{
+              cursor: 'none'
+            }}
+          />
+          {cursorPosition && isHovering && (
+            <div
+              className={styles.brushCursor}
+              style={{
+                left: cursorPosition.x,
+                top: cursorPosition.y,
+                width: brushRadius * 2,
+                height: brushRadius * 2,
+                border: '1.5px solid rgba(255, 255, 255, 0.5)',
+                borderRadius: '50%',
+                position: 'fixed',
+                pointerEvents: 'none',
+                zIndex: 1000,
+                transform: 'translate(-50%, -50%)',
+                backgroundColor: 'transparent',
+                background: 'transparent',
+                boxShadow: 'none'
+              }}
+            />
+          )}
+        </>
+      ) : (
+        <ImageUpload onImageSelect={onImageSelect} />
       )}
     </div>
   );

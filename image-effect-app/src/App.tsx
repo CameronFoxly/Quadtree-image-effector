@@ -310,75 +310,70 @@ function App() {
     <div className="container">
       <div className="content">
         <main className="main">
-          {!imageUrl ? (
-            <ImageUpload onImageSelect={handleImageSelect} />
-          ) : (
-            <>
-              <div className="previewSection">
-                <ImagePreview
-                  imageUrl={imageUrl}
-                  settings={{
-                    varianceThreshold,
-                    maxLevel,
-                    outlineColor,
-                    outlineWidth
-                  }}
-                  brushRadius={brushRadius}
-                  revealMode={revealMode}
-                  imageRemovedRegions={imageRemovedRegions}
-                  gridOutlinedRegions={gridOutlinedRegions}
-                  tintedRegions={tintedRegions}
-                  fillColor={fillColor}
-                  blendMode={blendMode}
-                  tintOpacity={tintOpacity}
-                  onImageRemovedRegionsChange={handleImageRegionsChange}
-                  onGridOutlinedRegionsChange={handleGridRegionsChange}
-                  onTintedRegionsChange={handleTintedRegionsChange}
-                  onBatchOperationStart={() => setIsInBatchOperation(true)}
-                  onBatchOperationEnd={handleBatchOperationEnd}
-                />
-              </div>
-              <div className="controlsSection">
-                <EffectControls
-                  varianceThreshold={varianceThreshold}
-                  onVarianceThresholdChange={setVarianceThreshold}
-                  maxLevel={maxLevel}
-                  onMaxLevelChange={setMaxLevel}
-                  outlineColor={outlineColor}
-                  onOutlineColorChange={setOutlineColor}
-                  outlineWidth={outlineWidth}
-                  onOutlineWidthChange={setOutlineWidth}
-                  brushRadius={brushRadius}
-                  onBrushRadiusChange={setBrushRadius}
-                  revealMode={revealMode}
-                  onRevealModeChange={setRevealMode}
-                  fillColor={fillColor}
-                  onFillColorChange={setFillColor}
-                  blendMode={blendMode}
-                  onBlendModeChange={setBlendMode}
-                  tintOpacity={tintOpacity}
-                  onTintOpacityChange={setTintOpacity}
-                  onReset={() => {
-                    setImageRemovedRegions([]);
-                    setGridOutlinedRegions([]);
-                    setTintedRegions([]);
-                    setHistory([{ 
-                      imageRemovedRegions: [], 
-                      gridOutlinedRegions: [],
-                      tintedRegions: []
-                    }]);
-                    setCurrentHistoryIndex(0);
-                  }}
-                  onUploadNewImage={() => setImageUrl(null)}
-                  onDownloadImage={handleDownload}
-                  onUndo={() => handleHistoryAction('undo')}
-                  onRedo={() => handleHistoryAction('redo')}
-                  canUndo={currentHistoryIndex > 0}
-                  canRedo={currentHistoryIndex < history.length - 1}
-                />
-              </div>
-            </>
-          )}
+          <div className="previewSection">
+            <ImagePreview
+              imageUrl={imageUrl}
+              settings={{
+                varianceThreshold,
+                maxLevel,
+                outlineColor,
+                outlineWidth
+              }}
+              brushRadius={brushRadius}
+              revealMode={revealMode}
+              imageRemovedRegions={imageRemovedRegions}
+              gridOutlinedRegions={gridOutlinedRegions}
+              tintedRegions={tintedRegions}
+              fillColor={fillColor}
+              blendMode={blendMode}
+              tintOpacity={tintOpacity}
+              onImageSelect={handleImageSelect}
+              onImageRemovedRegionsChange={handleImageRegionsChange}
+              onGridOutlinedRegionsChange={handleGridRegionsChange}
+              onTintedRegionsChange={handleTintedRegionsChange}
+              onBatchOperationStart={() => setIsInBatchOperation(true)}
+              onBatchOperationEnd={handleBatchOperationEnd}
+            />
+          </div>
+          <div className="controlsSection">
+            <EffectControls
+              varianceThreshold={varianceThreshold}
+              onVarianceThresholdChange={setVarianceThreshold}
+              maxLevel={maxLevel}
+              onMaxLevelChange={setMaxLevel}
+              outlineColor={outlineColor}
+              onOutlineColorChange={setOutlineColor}
+              outlineWidth={outlineWidth}
+              onOutlineWidthChange={setOutlineWidth}
+              brushRadius={brushRadius}
+              onBrushRadiusChange={setBrushRadius}
+              revealMode={revealMode}
+              onRevealModeChange={setRevealMode}
+              fillColor={fillColor}
+              onFillColorChange={setFillColor}
+              blendMode={blendMode}
+              onBlendModeChange={setBlendMode}
+              tintOpacity={tintOpacity}
+              onTintOpacityChange={setTintOpacity}
+              onReset={() => {
+                setImageRemovedRegions([]);
+                setGridOutlinedRegions([]);
+                setTintedRegions([]);
+                setHistory([{ 
+                  imageRemovedRegions: [], 
+                  gridOutlinedRegions: [],
+                  tintedRegions: []
+                }]);
+                setCurrentHistoryIndex(0);
+              }}
+              onUploadNewImage={() => setImageUrl(null)}
+              onDownloadImage={handleDownload}
+              onUndo={() => handleHistoryAction('undo')}
+              onRedo={() => handleHistoryAction('redo')}
+              canUndo={currentHistoryIndex > 0}
+              canRedo={currentHistoryIndex < history.length - 1}
+            />
+          </div>
         </main>
       </div>
     </div>

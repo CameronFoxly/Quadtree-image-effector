@@ -9,85 +9,49 @@
   letter-spacing: -0.5px;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
-}
-
 .container {
   width: 100%;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
 .content {
-  width: 100%;
-  height: 100%;
-}
-
-.main {
-  width: 100%;
-  height: 100%;
-  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
-/* When there's no image, center the upload UI */
-.main:has(> :only-child) {
+.main {
+  flex: 1;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
 }
 
 .previewSection {
   flex: 1;
   min-width: 0;
-  background-color: var(--surface-color);
-  border-radius: 8px;
-  padding: 1rem;
+  position: relative;
+  background-color: var(--panel-bg);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  margin: 1rem;
+  margin-right: 0;
 }
 
 .controlsSection {
   width: 300px;
-  background-color: var(--surface-color);
-  border-radius: 4px;
+  min-width: 300px;
+  background-color: var(--panel-bg);
+  border-radius: 0.5rem 0 0 0.5rem;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  max-height: 800px;
-  overflow-y: auto;
 }
 
 .controlsSection label {
@@ -241,85 +205,11 @@ body {
   letter-spacing: -0.5px;
 }
 
-.container {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.content {
-  flex: 1;
-  padding: 2rem;
-}
-
-.main {
-  max-width: 1600px;
-  margin: 0 auto;
-  display: flex;
-  gap: 1rem;
-  height: 100%;
-}
-
-.previewSection {
-  flex: 1;
-  min-width: 0;
-  background-color: var(--surface-color);
-  border-radius: 8px;
-  padding: 1rem;
-}
-
-.controlsSection {
-  width: 300px;
-  background-color: var(--surface-color);
-  border-radius: 4px;
-  padding: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  max-height: 800px;
-  overflow-y: auto;
-}
-
 .buttonGroup {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   margin-top: 0.75rem;
-}
-
-.button {
-  padding: 0.5rem 0.75rem;
-  border: none;
-  border-radius: 3px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.buttonPrimary {
-  background-color: var(--text-color);
-  color: var(--panel-bg);
-}
-
-.buttonPrimary:hover {
-  background-color: var(--accent-hover);
-}
-
-.buttonPrimary.selected {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-.buttonSecondary {
-  background-color: transparent;
-  color: var(--text-color);
-  border: var(--border-width) solid var(--text-color);
-}
-
-.buttonSecondary:hover {
-  background-color: rgba(53, 53, 53, 0.1);
 }
 
 /* Dark mode specific styles */
@@ -342,21 +232,8 @@ select {
   font-size: 0.85rem;
 }
 
-/* Scrollbar styles */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--background-color);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+/* Dark mode styles */
+.dark .previewSection,
+.dark .controlsSection {
+  background-color: var(--panel-bg-dark);
 }
