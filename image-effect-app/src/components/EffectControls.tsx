@@ -165,55 +165,55 @@ export default function EffectControls({
           </div>
           <div className={styles.sectionContent}>
             <div className={styles.controlLabel}>Variance threshold</div>
-            <div className={styles.sliderContainer}>
+        <div className={styles.sliderContainer}>
               <div 
                 className={styles.sliderTrack}
                 style={{
                   '--slider-position': `${((varianceThreshold) / 2000) * 100}%`
                 } as React.CSSProperties}
               >
-                <input
-                  type="range"
-                  min="0"
-                  max="2000"
-                  value={varianceThreshold}
-                  onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
-                />
+          <input
+            type="range"
+            min="0"
+            max="2000"
+            value={varianceThreshold}
+            onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+          />
               </div>
-              <input
+          <input
                 type="text"
-                value={varianceThreshold}
-                onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
+            value={varianceThreshold}
+            onChange={(e) => onVarianceThresholdChange(Number(e.target.value))}
                 className={styles.numberInput}
-              />
-            </div>
-          </div>
+          />
+        </div>
+      </div>
 
           <div className={styles.sectionContent}>
             <div className={styles.controlLabel}>Max level</div>
-            <div className={styles.sliderContainer}>
+        <div className={styles.sliderContainer}>
               <div 
                 className={styles.sliderTrack}
                 style={{
                   '--slider-position': `${((maxLevel - 1) / 9) * 100}%`
                 } as React.CSSProperties}
               >
-                <input
-                  type="range"
-                  min="1"
+          <input
+            type="range"
+            min="1"
                   max="10"
-                  value={maxLevel}
-                  onChange={(e) => onMaxLevelChange(Number(e.target.value))}
-                />
+            value={maxLevel}
+            onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+          />
               </div>
-              <input
+          <input
                 type="text"
-                value={maxLevel}
-                onChange={(e) => onMaxLevelChange(Number(e.target.value))}
+            value={maxLevel}
+            onChange={(e) => onMaxLevelChange(Number(e.target.value))}
                 className={styles.numberInput}
-              />
-            </div>
-          </div>
+          />
+        </div>
+      </div>
         </div>
       )}
 
@@ -222,37 +222,37 @@ export default function EffectControls({
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
             <h2>Grid settings</h2>
-          </div>
+      </div>
           <div className={styles.sectionContent}>
             <ColorInput
               label="Outline Color"
-              value={outlineColor}
+          value={outlineColor}
               onChange={onOutlineColorChange}
-            />
-          </div>
+        />
+      </div>
 
           <div className={styles.controlLabel}>Outline Width</div>
           <div className={styles.sectionContent}>
-            <div className={styles.sliderContainer}>
+        <div className={styles.sliderContainer}>
               <div 
                 className={styles.sliderTrack}
                 style={{
                   '--slider-position': `${(outlineWidth / 5) * 100}%`
                 } as React.CSSProperties}
               >
-                <input
-                  type="range"
-                  min="0"
+          <input
+            type="range"
+            min="0"
                   max="5"
-                  step="0.1"
-                  value={outlineWidth}
-                  onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
-                />
+            step="0.1"
+            value={outlineWidth}
+            onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+          />
               </div>
-              <input
+          <input
                 type="text"
-                value={outlineWidth}
-                onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
+            value={outlineWidth}
+            onChange={(e) => onOutlineWidthChange(Number(e.target.value))}
                 className={styles.numberInput}
               />
             </div>
@@ -300,7 +300,7 @@ export default function EffectControls({
               >
                 <input
                   type="range"
-                  min="0"
+            min="0"
                   max="100"
                   value={tintOpacity}
                   onChange={(e) => onTintOpacityChange(Number(e.target.value))}
@@ -320,16 +320,16 @@ export default function EffectControls({
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h2>Actions</h2>
-        </div>
+      </div>
         <div className={styles.buttonGrid}>
-          <button
+        <button
             onClick={onUndo}
             disabled={!canUndo}
             className={styles.actionButton}
-          >
+        >
             Undo
-          </button>
-          <button
+        </button>
+        <button
             onClick={onRedo}
             disabled={!canRedo}
             className={styles.actionButton}
@@ -341,13 +341,13 @@ export default function EffectControls({
           </button>
           <button onClick={onUploadNewImage} className={styles.actionButton}>
             New Image
-          </button>
+        </button>
         </div>
       </div>
 
       <div className={styles.section}>
-        <button 
-          onClick={onDownloadImage} 
+        <button
+          onClick={onDownloadImage}
           className={styles.downloadButton}
         >
           Download Image

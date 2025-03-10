@@ -277,7 +277,7 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.3125rem;
-  padding: 0;
+  padding: 5px 0;
 }
 
 .actionButton {
@@ -732,8 +732,12 @@ input[type="color"]::-webkit-color-swatch {
   opacity: 0.9;
 }
 
-.section:last-child {
+.section:has(.buttonGrid) {
   margin-top: auto;
+}
+
+.section:last-child {
+  margin-top: 0;
   padding: 0.3125rem;
   border-bottom: none;
 } 
