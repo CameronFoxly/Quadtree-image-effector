@@ -1,54 +1,51 @@
-# React + TypeScript + Vite
+# Quadtree Image Editor
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![Quadtree Editor Preview](screenshot.jpg)
 
-Currently, two official plugins are available:
+An interactive image editor that uses quadtree decomposition to create unique artistic effects. Built with React, TypeScript, and Vite.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## Expanding the ESLint configuration
+- **Interactive Brush Tools:**
+  - Add/Remove Image: Reveal or conceal portions of the image using quadtree decomposition
+  - Add/Remove Grid: Apply or erase grid overlays
+  - Add/Remove Color: Apply or remove color overlays with customizable blend modes
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Quadtree Settings:**
+  - Adjustable variance threshold for controlling decomposition sensitivity
+  - Configurable maximum subdivision level
+  - Real-time brush size preview
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- **Color and Style Controls:**
+  - Customizable grid colors and line thickness
+  - Color overlay with multiple blend modes
+  - Adjustable opacity settings
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Editing Tools:**
+  - Undo/Redo functionality
+  - Reset to original state
+  - Download modified image
+  - Upload new images
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Getting Started
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+## Built With
+
+- React
+- TypeScript
+- Vite
+- HTML Canvas API
+
+## License
+
+MIT License - feel free to use and modify for your own projects!
