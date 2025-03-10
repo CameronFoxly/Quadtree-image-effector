@@ -7,6 +7,7 @@
   padding: 0;
   overflow: hidden;
   letter-spacing: -0.5px;
+  background-color: #F9F7F3;
 }
 
 .container {
@@ -36,6 +37,7 @@
   position: relative;
   background-color: var(--panel-bg);
   border-radius: 0.5rem;
+  border: var(--border-width) solid var(--text-color);
   overflow: hidden;
   margin: 1rem;
   margin-right: 0;
@@ -206,7 +208,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #F0EFEE;
+  background-color: #F9F7F3;
   color: var(--text-color);
   letter-spacing: -0.5px;
 }

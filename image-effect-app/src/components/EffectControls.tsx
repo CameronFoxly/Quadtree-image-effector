@@ -82,13 +82,13 @@ export default function EffectControls({
               className={`${styles.modeButton} ${revealMode === 'image' ? styles.active : ''}`}
               onClick={() => onRevealModeChange('image')}
             >
-              Reveal image
+              Add image
             </button>
             <button
               className={`${styles.modeButton} ${revealMode === 'conceal' ? styles.active : ''}`}
               onClick={() => onRevealModeChange('conceal')}
             >
-              Conceal image
+              Remove image
             </button>
             <button
               className={`${styles.modeButton} ${revealMode === 'grid' ? styles.active : ''}`}
