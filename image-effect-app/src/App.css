@@ -101,7 +101,7 @@
 }
 
 .button {
-  padding: 0.4rem 0.6rem;
+  padding: 0.4rem 0.8rem;
   border: none;
   border-radius: 2px;
   font-size: 0.8125rem;
@@ -210,6 +210,7 @@ body {
   flex-direction: column;
   gap: 0.5rem;
   margin-top: 0.75rem;
+  padding: 0 0.5rem;
 }
 
 /* Dark mode specific styles */

@@ -31,18 +31,22 @@
 }
 
 .sectionHeader {
-  height: 1.25rem;
-  padding: 0.125rem 0.3125rem;
+  height: 1.5rem;
+  padding: 0 0.3125rem;
+  border-top: var(--border-width) solid var(--text-color);
   border-bottom: var(--border-width) solid var(--text-color);
   text-transform: uppercase;
+  display: flex;
+  align-items: center;
 }
 
 .sectionHeader h2 {
   font-size: 0.75rem;
-  font-weight: 400;
+  font-weight: 700;
   color: var(--text-muted);
   line-height: 1;
   font-family: var(--mono-font);
+  margin: 0;
 }
 
 .sectionContent {
@@ -277,19 +281,21 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.3125rem;
-  padding: 5px 0;
+  padding: 0.3125rem;
 }
 
 .actionButton {
-  padding: 0.4rem 0.6rem;
-  font-size: 0.8125rem;
-  font-family: var(--mono-font);
-  background: var(--panel-bg);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 2rem;
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-color);
+  background: transparent;
   border: var(--border-width) solid var(--text-color);
   border-radius: var(--border-radius);
-  color: var(--text-color);
   cursor: pointer;
-  transition: all 0.2s ease;
 }
 
 .actionButton:hover:not(:disabled) {
@@ -655,18 +661,34 @@ input[type="color"]::-webkit-color-swatch {
 .colorInputContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0;
+  padding: 0;
+}
+
+.sectionContent:has(.colorInputContainer) {
+  padding: 0;
 }
 
 .colorInputLabel {
-  font-size: 0.8125rem;
-  color: var(--text-color);
+  height: 1.25rem;
+  padding: 0 0.3125rem;
+  font-size: 0.625rem;
+  font-weight: 400;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-top: var(--border-width) solid var(--text-color);
+  border-bottom: var(--border-width) solid var(--text-color);
+  font-family: var(--mono-font);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
 }
 
 .colorInputWrapper {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  padding: 0.3125rem;
 }
 
 .colorPicker {
