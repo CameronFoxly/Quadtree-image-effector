@@ -100,12 +100,18 @@
   width: 60px;
 }
 
+.button,
+.buttonPrimary,
+.buttonSecondary,
+button {
+  font-family: var(--mono-font);
+}
+
 .button {
   padding: 0.4rem 0.8rem;
   border: none;
   border-radius: 2px;
   font-size: 0.8125rem;
-  font-family: var(--mono-font);
   font-weight: 400;
   cursor: pointer;
   transition: all 0.15s ease;
