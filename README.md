@@ -56,6 +56,4 @@ The quadtree structure enables efficient region selection and manipulation, allo
 - Vite
 - HTML Canvas API
 
-## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
