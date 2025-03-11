@@ -84,37 +84,37 @@ export default function EffectControls({
                 className={`${styles.modeButton} ${revealMode === 'image' ? styles.active : ''}`}
                 onClick={() => onRevealModeChange('image')}
               >
-                Add image
+                <span>Add image</span>
               </button>
               <button
                 className={`${styles.modeButton} ${revealMode === 'conceal' ? styles.active : ''}`}
                 onClick={() => onRevealModeChange('conceal')}
               >
-                Remove image
+                <span>Remove image</span>
               </button>
               <button
                 className={`${styles.modeButton} ${revealMode === 'grid' ? styles.active : ''}`}
                 onClick={() => onRevealModeChange('grid')}
               >
-                Add grid
+                <span>Add grid</span>
               </button>
               <button
                 className={`${styles.modeButton} ${revealMode === 'remove-outlines' ? styles.active : ''}`}
                 onClick={() => onRevealModeChange('remove-outlines')}
               >
-                Remove grid
+                <span>Remove grid</span>
               </button>
               <button
                 className={`${styles.modeButton} ${revealMode === 'add-color' ? styles.active : ''}`}
                 onClick={() => onRevealModeChange('add-color')}
               >
-                Add color
+                <span>Add color</span>
               </button>
               <button
                 className={`${styles.modeButton} ${revealMode === 'remove-color' ? styles.active : ''}`}
                 onClick={() => onRevealModeChange('remove-color')}
               >
-                Remove color
+                <span>Remove color</span>
               </button>
             </div>
           </div>
@@ -253,26 +253,26 @@ export default function EffectControls({
                 disabled={!canUndo}
                 className={styles.actionButton}
               >
-                Undo
+                <span>Undo</span>
               </button>
               <button
                 onClick={onRedo}
                 disabled={!canRedo}
                 className={styles.actionButton}
               >
-                Redo
+                <span>Redo</span>
               </button>
               <button
                 onClick={onReset}
                 className={styles.actionButton}
               >
-                Reset
+                <span>Reset</span>
               </button>
               <button
                 onClick={onUploadNewImage}
                 className={styles.actionButton}
               >
-                New Image
+                <span>New Image</span>
               </button>
             </div>
           </div>
@@ -283,7 +283,7 @@ export default function EffectControls({
             onClick={onDownloadImage}
             className={styles.downloadButton}
           >
-            Download Image
+            <span>Download Image</span>
           </button>
         </div>
       </div>
