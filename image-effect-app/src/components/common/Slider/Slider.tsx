@@ -46,7 +46,7 @@ export const Slider: React.FC<SliderProps> = ({
 }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const dragTimeoutRef = useRef<number>();
+  const dragTimeoutRef = useRef<number | undefined>(undefined);
   
   const animate = useAnimatedValue(value, onChange, {
     duration: isDragging ? 100 : 300,
