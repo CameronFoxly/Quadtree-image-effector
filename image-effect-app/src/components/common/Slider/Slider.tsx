@@ -48,37 +48,16 @@ export const Slider: React.FC<SliderProps> = ({
 }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const dragTimeoutRef = useRef<number | undefined>(undefined);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typedValue, setTypedValue] = useState('');
+  const [lastChangeWasTyped, setLastChangeWasTyped] = useState(false);
+  const dragStartPosRef = useRef<number | null>(null);
+  const hasMovedThresholdRef = useRef(false);
   
   const animate = useAnimatedValue(value, onChange, {
-    duration: isDragging ? 100 : 300,
-    easing: isDragging 
-      ? createCubicBezier(0, 0.2, 0.2, 1)  // Fast easing for dragging
-      : createCubicBezier(0, 0, 0.2, 1)    // Default easing for clicking
+    duration: 300,
+    easing: createCubicBezier(0, 0, 0.2, 1)
   });
-
-  const handleDragStart = useCallback((_e: React.MouseEvent) => {
-    // Clear any existing timeout
-    if (dragTimeoutRef.current) {
-      window.clearTimeout(dragTimeoutRef.current);
-    }
-    // Set a timeout to determine if this is a drag or click
-    dragTimeoutRef.current = window.setTimeout(() => {
-      setIsDragging(true);
-    }, 150); // 150ms delay before considering it a drag
-  }, []);
-
-  const handleDragEnd = useCallback((_e: React.MouseEvent) => {
-    // Clear the timeout if it hasn't triggered yet
-    if (dragTimeoutRef.current) {
-      window.clearTimeout(dragTimeoutRef.current);
-    }
-    setIsDragging(false);
-  }, []);
-
-  const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    animate(Number(e.target.value));
-  }, [animate]);
 
   const calculateValueFromPosition = useCallback((clientX: number) => {
     if (!trackRef.current) return value;
@@ -98,18 +77,95 @@ export const Slider: React.FC<SliderProps> = ({
     return clampedValue;
   }, [min, max, step, value]);
 
+  const handleDragStart = useCallback((e: React.MouseEvent) => {
+    dragStartPosRef.current = e.clientX;
+    hasMovedThresholdRef.current = false;
+    setIsDragging(true);
+    setLastChangeWasTyped(false);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleDragEnd);
+  }, []);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (isDragging) {
+      // Only check threshold once at the start of dragging
+      if (!hasMovedThresholdRef.current && dragStartPosRef.current !== null) {
+        const moveDistance = Math.abs(e.clientX - dragStartPosRef.current);
+        if (moveDistance > 5) {
+          hasMovedThresholdRef.current = true;
+        }
+      }
+
+      const newValue = calculateValueFromPosition(e.clientX);
+      if (hasMovedThresholdRef.current) {
+        // If we've moved past threshold, update directly
+        onChange(newValue);
+      } else {
+        // If we haven't moved much, treat it like a click
+        animate(newValue);
+      }
+    }
+  }, [isDragging, onChange, animate, calculateValueFromPosition]);
+
+  const handleDragEnd = useCallback(() => {
+    dragStartPosRef.current = null;
+    hasMovedThresholdRef.current = false;
+    setIsDragging(false);
+    window.removeEventListener('mousemove', handleMouseMove);
+    window.removeEventListener('mouseup', handleDragEnd);
+  }, [handleMouseMove]);
+
   const handleTrackClick = useCallback((e: React.MouseEvent) => {
-    if (!isDragging) {  // Only handle click if not dragging
+    if (!isDragging) {
+      setLastChangeWasTyped(false);
       const targetValue = calculateValueFromPosition(e.clientX);
       animate(targetValue);
     }
   }, [calculateValueFromPosition, animate, isDragging]);
 
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number(e.target.value);
+    if (isDragging && hasMovedThresholdRef.current) {
+      onChange(newValue);
+    } else {
+      setLastChangeWasTyped(false);
+      animate(newValue);
+    }
+  }, [animate, onChange, isDragging]);
+
+  const handleNumberInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setTypedValue(e.target.value);
+    setIsTyping(true);
+  }, []);
+
+  const applyTypedValue = useCallback(() => {
+    const newValue = Number(typedValue);
+    if (!isNaN(newValue)) {
+      const clampedValue = Math.min(Math.max(newValue, min), max);
+      setLastChangeWasTyped(true);
+      animate(clampedValue);
+    }
+    setIsTyping(false);
+  }, [typedValue, min, max, animate]);
+
+  const handleNumberInputKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      applyTypedValue();
+    } else if (e.key === 'Escape') {
+      setIsTyping(false);
+      setLastChangeWasTyped(false);
+    }
+  }, [applyTypedValue]);
+
   // Calculate slider position percentage for styling
   const position = ((value - min) / (max - min)) * 100;
 
-  // Round the display value based on precision
-  const displayValue = Number(value.toFixed(displayPrecision));
+  // Determine what value to display
+  const displayValue = isTyping 
+    ? typedValue 
+    : lastChangeWasTyped 
+      ? Number(typedValue || value).toFixed(displayPrecision)
+      : Number(value).toFixed(displayPrecision);
 
   return (
     <div className={`${styles.container} ${className || ''}`}>
@@ -130,21 +186,16 @@ export const Slider: React.FC<SliderProps> = ({
             step={step}
             value={value}
             onMouseDown={handleDragStart}
-            onMouseUp={handleDragEnd}
-            onMouseLeave={handleDragEnd}
-            onChange={handleChange}
+            onChange={handleInputChange}
             className={styles.rangeInput}
           />
         </div>
         <input
           type="number"
           value={displayValue}
-          onChange={(e) => {
-            const newValue = Number(e.target.value);
-            if (!isNaN(newValue)) {
-              animate(Math.min(Math.max(newValue, min), max));
-            }
-          }}
+          onChange={handleNumberInputChange}
+          onBlur={applyTypedValue}
+          onKeyDown={handleNumberInputKeyDown}
           className={styles.numberInput}
         />
       </div>
