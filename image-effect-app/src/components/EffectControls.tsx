@@ -139,6 +139,7 @@ export default function EffectControls({
               max={400}
               value={brushRadius}
               onChange={onBrushRadiusChange}
+              displayPrecision={0}
             />
           </div>
         </div>
@@ -156,6 +157,7 @@ export default function EffectControls({
                 max={2000}
                 value={varianceThreshold}
                 onChange={onVarianceThresholdChange}
+                displayPrecision={0}
               />
             </div>
 
@@ -166,6 +168,7 @@ export default function EffectControls({
                 max={10}
                 value={maxLevel}
                 onChange={onMaxLevelChange}
+                displayPrecision={0}
               />
             </div>
           </div>
@@ -193,6 +196,7 @@ export default function EffectControls({
                 step={0.1}
                 value={outlineWidth}
                 onChange={onOutlineWidthChange}
+                displayPrecision={1}
               />
             </div>
           </div>
@@ -234,6 +238,7 @@ export default function EffectControls({
                 max={100}
                 value={tintOpacity}
                 onChange={onTintOpacityChange}
+                displayPrecision={0}
               />
             </div>
           </div>

@@ -10,6 +10,7 @@ interface SliderProps {
   step?: number;
   label?: string;
   className?: string;
+  displayPrecision?: number;
 }
 
 const createCubicBezier = (x1: number, y1: number, x2: number, y2: number) => {
@@ -42,7 +43,8 @@ export const Slider: React.FC<SliderProps> = ({
   onChange,
   step = 1,
   label,
-  className
+  className,
+  displayPrecision = 0
 }) => {
   const trackRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -106,6 +108,9 @@ export const Slider: React.FC<SliderProps> = ({
   // Calculate slider position percentage for styling
   const position = ((value - min) / (max - min)) * 100;
 
+  // Round the display value based on precision
+  const displayValue = Number(value.toFixed(displayPrecision));
+
   return (
     <div className={`${styles.container} ${className || ''}`}>
       {label && <div className={styles.label}>{label}</div>}
@@ -133,7 +138,7 @@ export const Slider: React.FC<SliderProps> = ({
         </div>
         <input
           type="number"
-          value={value}
+          value={displayValue}
           onChange={(e) => {
             const newValue = Number(e.target.value);
             if (!isNaN(newValue)) {
