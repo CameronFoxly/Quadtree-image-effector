@@ -34,15 +34,19 @@ The quadtree structure enables efficient region selection and manipulation, allo
 ## Getting Started
 
 1. Clone the repository
-2. Install dependencies:
+2. Change directories into the App folder (bad structure, I know)
+     ```bash
+   cd image-effect-app
+   ```
+3. Install dependencies:
    ```bash
    npm install
    ```
-3. Start the development server:
+4. Start the development server:
    ```bash
    npm run dev
    ```
-4. Open your browser to the local development URL
+5. Open your browser to the local development URL
 
 
 ## Built With
